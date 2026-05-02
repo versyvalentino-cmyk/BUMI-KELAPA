@@ -4,7 +4,6 @@ define('DB_NAME',    getenv('MYSQL_DATABASE'));
 define('DB_USER',    getenv('MYSQLUSER'));
 define('DB_PASS',    getenv('MYSQLPASSWORD'));
 define('DB_PORT',    getenv('MYSQLPORT') ?: '3306');
-define('DB_CHARSET', 'utf8mb4');
 
 function getDB() {
     static $pdo = null;
