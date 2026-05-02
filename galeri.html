@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeri - Bumi Kelapa</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+.galeri{
+display:flex;
+flex-wrap:wrap;
+gap:20px;
+justify-content:center;
+margin-top:30px;
+}
+
+.gambar-produk{
+background:white;
+padding:15px;
+border-radius:8px;
+width:220px;
+text-align:center;
+box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+
+.gambar-produk img{
+width:100%;
+height:160px;
+object-fit:cover;
+border-radius:6px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header style="height:150px; display:flex; justify-content:center; align-items:center;">
+    <img src="logo/NEW.png" alt="Bumi Kelapa" 
+    style="height:225px; width:auto;">
+</header>
+
+
+<nav>
+  <a href="index.html" >Beranda</a>
+  <a href="produk.html">Produk</a>
+  <a href="galeri.html"class="active">Galeri</a>
+  <a href="tentang.html">Tentang Kami</a>
+  <a href="kontak.html">Kontak</a>
+</nav>
+
+
+<div class="galeri-header">
+  <h2>Galeri Produk</h2>
+  <p>Berikut adalah beberapa produk utama yang tersedia di Bumi Kelapa.</p>
+</div>
+
+<div class="galeri-grid">
+
+  <!-- Kelapa 3D -->
+  <div class="galeri-card" onclick="buka360()">
+    <div class="galeri-badge">360°</div>
+    <img src="images360/kelapa1.jpeg" alt="Kelapa">
+    <div class="galeri-card-info">
+      <h3>Kelapa Sudah Dikupas</h3>
+      <p> Klik untuk lihat tampilan 3D</p>
+    </div>
+  </div>
+
+  <!-- Sabut -->
+  <div class="galeri-card" onclick="lihatGambar(this.querySelector('img'))">
+    <img src="images/sabut.jpg" alt="Sabut Kelapa">
+    <div class="galeri-card-info">
+      <h3>Sabut Kelapa</h3>
+      <p> Klik untuk perbesar</p>
+    </div>
+  </div>
+
+  <!-- Tempurung -->
+  <div class="galeri-card" onclick="lihatGambar(this.querySelector('img'))">
+    <img src="images/tempurung.jpg" alt="Tempurung Kelapa">
+    <div class="galeri-card-info">
+      <h3>Tempurung Kelapa</h3>
+      <p> Klik untuk perbesar</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL GAMBAR BESAR -->
+<div id="modalGambar" onclick="tutupModal()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
+  <img id="modalImg" style="max-width:85%; max-height:85vh; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,0.5); animation: zoomIn 0.3s ease;">
+  <div style="position:absolute; top:20px; right:30px; color:white; font-size:36px; cursor:pointer; font-weight:300;">✕</div>
+</div>
+
+<style>
+@keyframes zoomIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.galeri-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: linear-gradient(135deg, #2d6a2d, #c8b87a);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  z-index: 2;
+}
+</style>
+
+<script>
+function lihatGambar(img) {
+  const modal = document.getElementById('modalGambar');
+  document.getElementById('modalImg').src = img.src;
+  modal.style.display = 'flex';
+}
+
+function tutupModal() {
+  document.getElementById('modalGambar').style.display = 'none';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') tutupModal();
+});
+</script>
+
+
+</div>
+
+</div>
+
+<footer>
+<p>© 2026 Bumi Kelapa</p>
+</footer>
+
+<div id="popupGambar" class="popup">
+<span class="tutup" onclick="tutupGambar()">×</span>
+<img class="popup-content" id="gambarBesar">
+</div>
+
+<script src="script.js"></script>
+
+<div id="modal360" class="modal">
+    <span class="close" onclick="tutup360()">&times;</span>
+
+    <div class="viewer360" id="viewer">
+        <img id="img360" src="images360/kelapa1.jpeg" draggable="false">
+
+</div>
+
+<script>
+function buka360(){
+    document.getElementById("modal360").style.display = "block";
+    document.getElementById("img360").src = "images360/kelapa1.jpeg";
+}
+
+function tutup360(){
+    document.getElementById("modal360").style.display = "none";
+}
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+let current = 1;
+let total = 6;
+
+let img = document.getElementById("img360");
+let viewer = document.getElementById("viewer");
+
+
+
+/*  DRAG */
+let isDown = false;
+let startX = 0;
+
+viewer.addEventListener("mousedown", function(e){
+    isDown = true;
+    startX = e.clientX;
+});
+
+viewer.addEventListener("mouseup", function(){
+    isDown = false;
+});
+
+viewer.addEventListener("mouseleave", function(){
+    isDown = false;
+});
+
+viewer.addEventListener("mousemove", function(e){
+
+    if(!isDown) return;
+
+    let move = e.clientX - startX;
+
+    if(move > 6){
+        current--;
+        if(current < 1) current = total;
+        img.src = "images360/kelapa" + current + ".jpeg";
+        startX = e.clientX;
+    }
+
+    if(move < -6){
+        current++;
+        if(current > total) current = 1;
+        img.src = "images360/kelapa" + current + ".jpeg";
+        startX = e.clientX;
+    }
+
+});
+
+let startTouch = 0;
+
+viewer.addEventListener("touchstart", function(e){
+    startTouch = e.touches[0].clientX;
+});
+
+viewer.addEventListener("touchmove", function(e){
+    e.preventDefault();
+
+    let move = e.touches[0].clientX - startTouch;
+
+    if(move > 6){
+        current--;
+        if(current < 1) current = total;
+        img.src = "images360/kelapa" + current + ".jpeg";
+        startTouch = e.touches[0].clientX;
+    }
+
+    if(move < -6){
+        current++;
+        if(current > total) current = 1;
+        img.src = "images360/kelapa" + current + ".jpeg";
+        startTouch = e.touches[0].clientX;
+    }
+});
+
+
+});
+</script>
+
+<script>
+window.onclick = function(e){
+    let modal = document.getElementById("modal360");
+    if(e.target == modal){
+        modal.style.display = "none";
+    }
+}
+
+</script>
+
+
+
+</body>
+</html>

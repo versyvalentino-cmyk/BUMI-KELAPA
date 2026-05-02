@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bumi Kelapa</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="beranda">
+
+<video id="bgVideo" autoplay muted loop playsinline>
+<source src="video/kelapa.mp4" type="video/mp4">
+</video>
+
+<button id="soundBtn">🔊 Aktifkan Suara</button>
+
+<div class="overlay"></div>
+
+
+<header>
+<h1>Bumi Kelapa</h1>
+<p>Pusat Penjualan Kelapa dan Produk Turunannya</p>
+</header>
+
+<nav>
+  <a href="index.html" class="active">Beranda</a>
+  <a href="produk.html">Produk</a>
+  <a href="galeri.html">Galeri</a>
+  <a href="tentang.html">Tentang Kami</a>
+  <a href="kontak.html">Kontak</a>
+</nav>
+
+<div class="hero"></div>
+
+<a href="produk.html" class="btn">Lihat Produk</a>
+
+<footer>
+<p>© 2026 Bumi Kelapa</p>
+</footer>
+
+<script>
+
+const video = document.getElementById("bgVideo");
+const btn = document.getElementById("soundBtn");
+
+btn.addEventListener("click", function(){
+
+if(video.muted){
+
+video.muted = false;
+video.volume = 1;
+btn.innerText = "🔈 Matikan Suara";
+
+}else{
+
+video.muted = true;
+btn.innerText = "🔊 Aktifkan Suara";
+
+}
+
+});
+
+
+</script>
+
+</body>
+</html>

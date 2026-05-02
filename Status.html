@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lacak Pesanan - Bumi Kelapa</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ===== TRACKING PAGE ===== */
+.track-wrap {
+  max-width: 540px;
+  margin: 32px auto;
+  padding: 0 16px 60px;
+}
+
+/* Search Card */
+.search-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.07);
+  margin-bottom: 24px;
+}
+.search-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 6px;
+}
+.search-card p {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 20px;
+}
+.search-card input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color .15s;
+  box-sizing: border-box;
+}
+.search-card input:focus { border-color: #1D9E75; }
+.btn-cari {
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  border: none;
+  background: #1D9E75;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-cari:hover { background: #15795a; }
+.btn-cari:disabled { background: #d1d5db; cursor: not-allowed; }
+
+/* Error */
+.error-box {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #b91c1c;
+  margin-top: 10px;
+  display: none;
+}
+
+/* Result Card */
+.result-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.07);
+  overflow: hidden;
+  display: none;
+}
+
+/* Status Banner */
+.status-banner {
+  padding: 20px 24px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.status-banner::after {
+  content: '';
+  position: absolute;
+  right: -20px; top: -20px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.1);
+}
+.status-banner .sb-icon { font-size: 32px; margin-bottom: 6px; }
+.status-banner .sb-label {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.status-banner .sb-desc { font-size: 13px; opacity: .85; }
+.status-banner .sb-id {
+  position: absolute;
+  top: 16px; right: 20px;
+  font-size: 11px;
+  opacity: .7;
+  font-weight: 600;
+  letter-spacing: .05em;
+}
+
+/* Stepper */
+.stepper {
+  padding: 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.stepper-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 16px;
+}
+.steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+}
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 32px;
+  right: 32px;
+  height: 2px;
+  background: #e5e7eb;
+  z-index: 0;
+}
+.steps-progress {
+  position: absolute;
+  top: 16px;
+  left: 32px;
+  height: 2px;
+  background: #1D9E75;
+  z-index: 1;
+  transition: width .5s ease;
+}
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  z-index: 2;
+}
+.step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #ccc;
+  transition: all .3s;
+  font-weight: 700;
+}
+.step-item.done .step-dot {
+  background: #1D9E75;
+  border-color: #1D9E75;
+  color: #fff;
+}
+.step-item.active .step-dot {
+  border-color: #1D9E75;
+  color: #1D9E75;
+  box-shadow: 0 0 0 4px rgba(29,158,117,.12);
+}
+.step-item.cancelled .step-dot {
+  background: #EF4444;
+  border-color: #EF4444;
+  color: #fff;
+}
+.step-label {
+  font-size: 10px;
+  color: #888;
+  text-align: center;
+  line-height: 1.3;
+  font-weight: 500;
+  max-width: 56px;
+}
+.step-item.done .step-label,
+.step-item.active .step-label { color: #1D9E75; font-weight: 600; }
+.step-item.cancelled .step-label { color: #EF4444; }
+
+/* Detail Pesanan */
+.detail-section {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.detail-section:last-child { border-bottom: none; }
+.detail-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 12px;
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 5px 0;
+  font-size: 13px;
+  color: #555;
+}
+.detail-row strong {
+  font-weight: 600;
+  color: #222;
+  text-align: right;
+  max-width: 60%;
+}
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0 0;
+  margin-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F6E56;
+}
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-orange { background: #fef3c7; color: #92400e; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-purple { background: #ede9fe; color: #5b21b6; }
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+
+/* Info box */
+.info-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #166534;
+  margin: 4px 0 0;
+  line-height: 1.5;
+}
+
+/* Cari lagi */
+.btn-reset {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 16px;
+}
+.btn-reset:hover { background: #f9fafb; }
+
+/* Loading */
+.loading-spinner {
+  display: none;
+  text-align: center;
+  padding: 20px;
+  color: #1D9E75;
+  font-size: 14px;
+}
+.spinner {
+  display: inline-block;
+  width: 24px; height: 24px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #1D9E75;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Timeline steps untuk mobile */
+@media(max-width:420px) {
+  .step-label { font-size: 9px; max-width: 48px; }
+  .step-dot { width: 26px; height: 26px; font-size: 12px; }
+  .steps::before { top: 13px; left: 26px; right: 26px; }
+  .steps-progress { top: 13px; left: 26px; }
+}
+</style>
+</head>
+
+<body>
+
+<header style="height:150px; display:flex; justify-content:center; align-items:center;">
+    <img src="logo/NEW.png" alt="Bumi Kelapa" 
+    style="height:225px; width:auto;">
+</header>
+
+<div class="running-text">
+    <span>Lacak status pesanan Anda — Masukkan ID Pesanan dan Nomor HP</span>
+  </div>
+
+<nav>
+  <a href="index.html">Beranda</a>
+  <a href="produk.html"class="active">Produk</a>
+  <a href="galeri.html">Galeri</a>
+  <a href="tentang.html">Tentang Kami</a>
+  <a href="kontak.html">Kontak</a>
+</nav>
+
+
+<div class="track-wrap">
+
+  <!-- Search -->
+  <div class="search-card">
+<svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#2d6a2d" stroke-width="2" style="vertical-align:middle; margin-right:8px;">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+</svg> Lacak Pesanan
+    <p>Masukkan ID pesanan dan nomor HP yang kamu daftarkan saat memesan.</p>
+    <input type="number" id="inputId" placeholder="ID Pesanan (contoh: 30)" min="1">
+    <input type="tel" id="inputHp" placeholder="Nomor HP (contoh: 081248277174)">
+    <button class="btn-cari" onclick="cariPesanan()">Lacak Pesanan</button>
+    <div class="error-box" id="errorBox"></div>
+    <div class="loading-spinner" id="loadingSpinner">
+      <span class="spinner"></span> Mencari pesanan...
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+
+    <!-- Status Banner -->
+    <div class="status-banner" id="statusBanner">
+      <span class="sb-id" id="sbId"></span>
+      <div class="sb-icon" id="sbIcon"></div>
+      <div class="sb-label" id="sbLabel"></div>
+      <div class="sb-desc" id="sbDesc"></div>
+    </div>
+
+    <!-- Stepper -->
+    <div class="stepper" id="stepperSection">
+      <div class="stepper-title">Perjalanan Pesanan</div>
+      <div class="steps" id="stepsContainer">
+        <div class="steps-progress" id="stepsProgress" style="width:0%"></div>
+
+        <div class="step-item" id="step1">
+          <div class="step-dot">📋</div>
+          <div class="step-label">Menunggu Konfirmasi</div>
+        </div>
+        <div class="step-item" id="step2">
+          <div class="step-dot">📦</div>
+          <div class="step-label">Sedang Dikemas</div>
+        </div>
+        <div class="step-item" id="step3">
+          <div class="step-dot">🚚</div>
+          <div class="step-label">Dalam Perjalanan</div>
+        </div>
+        <div class="step-item" id="step4">
+          <div class="step-dot">✅</div>
+          <div class="step-label">Telah Tiba</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Produk -->
+    <div class="detail-section">
+      <div class="detail-section-title">📦 Detail Produk</div>
+      <div class="detail-row">
+        <span>Produk</span>
+        <strong id="dProduk">-</strong>
+      </div>
+      <div class="detail-row">
+        <span>Jumlah</span>
+        <strong id="dQty">-</strong>
+      </div>
+      <div class="detail-row">
+        <span>Harga Barang</span>
+        <strong id="dHarga">-</strong>
+      </div>
+      <div class="detail-row">
+        <span>Ongkir</span>
+        <strong id="dOngkir">-</strong>
+      </div>
+      <div class="total-row">
+        <span>Total Bayar</span>
+        <span id="dTotal">-</span>
+      </div>
+    </div>
+
+    <!-- Detail Pengiriman -->
+    <div class="detail-section">
+      <div class="detail-section-title">📍 Alamat Pengiriman</div>
+      <div class="detail-row">
+        <span>Nama</span>
+        <strong id="dNama">-</strong>
+      </div>
+      <div class="detail-row">
+        <span>Nomor HP</span>
+        <strong id="dHp">-</strong>
+      </div>
+      <div class="detail-row">
+        <span>Kecamatan</span>
+        <strong id="dKec">-</strong>
+      </div>
+      <div class="detail-row">
+        <span>Kelurahan</span>
+        <strong id="dKel">-</strong>
+      </div>
+      <div class="detail-row">
+        <span>Alamat</span>
+        <strong id="dAlamat">-</strong>
+      </div>
+    </div>
+
+    <!-- Detail Pembayaran -->
+    <div class="detail-section">
+      <div class="detail-section-title">💳 Pembayaran</div>
+      <div class="detail-row">
+        <span>Metode</span>
+        <strong id="dMetode">-</strong>
+      </div>
+      <div class="detail-row">
+        <span>Tanggal Pesan</span>
+        <strong id="dTanggal">-</strong>
+      </div>
+    </div>
+
+    <!-- Info box -->
+    <div class="detail-section">
+      <div class="info-box" id="infoBox"></div>
+    </div>
+
+  </div>
+
+  <button class="btn-reset" id="btnReset" style="display:none" onclick="resetForm()">
+    ← Cari Pesanan Lain
+  </button>
+
+</div>
+
+<script>
+const API_STATUS = 'api_status.php'; // Sesuaikan path jika perlu
+
+const stepIcons  = ['📋','📦','🚚','✅'];
+const stepWidths = ['12%','37%','62%','88%']; // posisi progress bar per step
+
+function rupiahFormat(n) {
+  return 'Rp ' + parseInt(n).toLocaleString('id-ID');
+}
+
+function tanggalFormat(str) {
+  if (!str) return '-';
+  const d = new Date(str);
+  return d.toLocaleString('id-ID', {
+    day:'2-digit', month:'long', year:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
+}
+
+async function cariPesanan() {
+  const id = document.getElementById('inputId').value.trim();
+  const hp = document.getElementById('inputHp').value.trim();
+  const errBox = document.getElementById('errorBox');
+  const loader = document.getElementById('loadingSpinner');
+
+  errBox.style.display = 'none';
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('btnReset').style.display = 'none';
+
+  if (!id || !hp) {
+    errBox.textContent = 'Masukkan ID Pesanan dan Nomor HP terlebih dahulu.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  loader.style.display = 'block';
+  document.querySelector('.btn-cari').disabled = true;
+
+  try {
+    const res  = await fetch(`${API_STATUS}?id=${encodeURIComponent(id)}&hp=${encodeURIComponent(hp)}`);
+    const data = await res.json();
+    loader.style.display = 'none';
+    document.querySelector('.btn-cari').disabled = false;
+
+    if (!data.sukses) {
+      errBox.textContent = data.pesan || 'Pesanan tidak ditemukan.';
+      errBox.style.display = 'block';
+      return;
+    }
+
+    tampilkanHasil(data.pesanan);
+
+  } catch (err) {
+    loader.style.display = 'none';
+    document.querySelector('.btn-cari').disabled = false;
+    errBox.textContent = 'Gagal terhubung ke server. Pastikan koneksi internet Anda aktif.';
+    errBox.style.display = 'block';
+  }
+}
+
+function tampilkanHasil(p) {
+  const step  = parseInt(p.status_step) || 1;
+  const isCancelled = p.status === 'dibatalkan';
+
+  // Banner
+  document.getElementById('statusBanner').style.background = p.status_warna;
+  document.getElementById('sbId').textContent    = `#${p.id}`;
+  document.getElementById('sbIcon').textContent  = isCancelled ? '❌' : stepIcons[step - 1] || '📋';
+  document.getElementById('sbLabel').textContent = p.status_label;
+  document.getElementById('sbDesc').textContent  = p.status_desc;
+
+  // Stepper
+  if (isCancelled) {
+    document.getElementById('stepperSection').style.display = 'none';
+  } else {
+    document.getElementById('stepperSection').style.display = 'block';
+    document.getElementById('stepsProgress').style.width = stepWidths[step - 1] || '12%';
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(`step${i}`);
+      el.classList.remove('done','active','cancelled');
+      if (i < step)       el.classList.add('done');
+      else if (i === step) el.classList.add('active');
+    }
+  }
+
+  // Detail produk
+  document.getElementById('dProduk').textContent = p.nama_produk || '-';
+  document.getElementById('dQty').textContent    = p.total_qty + ' unit';
+  document.getElementById('dHarga').textContent  = rupiahFormat(p.harga_barang);
+  document.getElementById('dOngkir').textContent = rupiahFormat(p.ongkir);
+  document.getElementById('dTotal').textContent  = rupiahFormat(p.total_bayar);
+
+  // Detail pengiriman
+  document.getElementById('dNama').textContent   = p.nama;
+  document.getElementById('dHp').textContent     = p.hp;
+  document.getElementById('dKec').textContent    = p.kecamatan;
+  document.getElementById('dKel').textContent    = p.kelurahan;
+  document.getElementById('dAlamat').textContent = p.alamat;
+
+  // Pembayaran
+  let metodeLabel = p.metode_pembayaran;
+  if (p.bank)    metodeLabel += ` — ${p.bank}`;
+  if (p.ewallet) metodeLabel += ` (${p.ewallet})`;
+  document.getElementById('dMetode').textContent  = metodeLabel || '-';
+  document.getElementById('dTanggal').textContent = tanggalFormat(p.tanggal);
+
+  // Info box
+  const infoMap = {
+    'menunggu_konfirmasi': '⏳ Pesanan Anda sedang ditinjau. Penjual akan segera mengkonfirmasi pesanan Anda.',
+    'diproses':            '📦 Pesanan sedang dikemas dengan hati-hati. Segera dikirim!',
+    'dikirim':             '🚚 Pesanan dalam perjalanan! Harap siapkan penerima di alamat tujuan.',
+    'tiba':                '🎉 Pesanan sudah tiba! Terima kasih telah berbelanja di Bumi Kelapa.',
+    'dibatalkan':          '❌ Pesanan ini dibatalkan. Hubungi kami jika ada pertanyaan.'
+  };
+  document.getElementById('infoBox').textContent = infoMap[p.status] || '';
+
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('btnReset').style.display   = 'block';
+  document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetForm() {
+  document.getElementById('inputId').value = '';
+  document.getElementById('inputHp').value = '';
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('btnReset').style.display   = 'none';
+  document.getElementById('errorBox').style.display   = 'none';
+  document.getElementById('inputId').focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') cariPesanan();
+});
+
+// Auto-isi dari URL (setelah redirect dari produk.html)
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const hp = params.get('hp');
+  if (id && hp) {
+    document.getElementById('inputId').value = id;
+    document.getElementById('inputHp').value = hp;
+    cariPesanan();
+  }
+});
+</script>
+
+</body>
+</html>

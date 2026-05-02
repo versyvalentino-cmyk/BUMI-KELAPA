@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produk - Bumi Kelapa</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ============================================================
+   CHAT WIDGET — Bumi Kelapa (dengan AI Chatbot)
+   ============================================================ */
+
+.chat-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  background: rgba(255,255,255,0.18);
+  border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 22px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .18s, transform .12s;
+  position: relative;
+  backdrop-filter: blur(4px);
+  user-select: none;
+}
+.chat-trigger-btn:hover { background: rgba(255,255,255,0.28); transform: scale(1.04); }
+.chat-trigger-btn .ct-icon { font-size: 16px; line-height: 1; }
+.chat-trigger-btn .ct-label { line-height: 1; }
+
+.chat-notif-bubble {
+  position: absolute; top: -5px; right: -5px;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  background: #FF4444; color: #fff;
+  font-size: 10px; font-weight: 800;
+  border-radius: 9px;
+  display: none; align-items: center; justify-content: center;
+  border: 2px solid #0F6E56;
+  animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+.chat-notif-bubble.show { display: flex; }
+@keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
+
+.chat-overlay {
+  display: none; position: fixed;
+  bottom: 0; right: 0; width: 100%; height: 100%;
+  z-index: 9998; background: transparent;
+}
+.chat-overlay.open { display: block; }
+
+.chat-window {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 370px; max-height: 580px;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 16px 56px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.08);
+  display: flex; flex-direction: column;
+  z-index: 9999;
+  transform: translateY(30px) scale(.96);
+  opacity: 0;
+  transition: transform .25s cubic-bezier(.34,1.2,.64,1), opacity .2s;
+  overflow: hidden;
+}
+.chat-window.open { transform: translateY(0) scale(1); opacity: 1; }
+
+/* Header chat */
+.cw-head {
+  background: linear-gradient(135deg, #0F6E56 0%, #1D9E75 100%);
+  color: #fff; padding: 14px 16px;
+  display: flex; align-items: center; gap: 10px;
+  border-radius: 22px 22px 0 0; flex-shrink: 0;
+}
+.cw-avatar {
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,.3);
+}
+.cw-head-info { flex: 1; min-width: 0; }
+.cw-head-name { font-size: 14px; font-weight: 700; }
+.cw-head-status {
+  font-size: 11px; opacity: .85;
+  display: flex; align-items: center; gap: 4px; margin-top: 2px;
+}
+.cw-dot {
+  width: 7px; height: 7px;
+  background: #6ee7b7; border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* Badge mode: bot / admin */
+.cw-mode-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 10px;
+  margin-left: 4px;
+  background: rgba(255,255,255,.2);
+  color: #fff;
+  display: inline-flex; align-items: center; gap: 3px;
+  flex-shrink: 0;
+}
+.cw-mode-badge.mode-bot { background: rgba(110,231,183,.25); }
+.cw-mode-badge.mode-eskalasi { background: rgba(251,191,36,.3); }
+.cw-mode-badge.mode-admin { background: rgba(167,243,208,.3); }
+
+.cw-close {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,.15); border: none; border-radius: 50%;
+  color: #fff; font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .15s; flex-shrink: 0;
+}
+.cw-close:hover { background: rgba(255,255,255,.28); }
+
+/* Form nama */
+.cw-form-nama {
+  padding: 20px 16px;
+  display: flex; flex-direction: column; gap: 10px; flex: 1;
+}
+.cw-form-nama p { font-size: 13px; color: #555; line-height: 1.6; }
+.cw-welcome-icon { font-size: 36px; text-align: center; margin-bottom: 4px; }
+.cw-input {
+  padding: 10px 13px;
+  border: 1.5px solid #e5e7eb; border-radius: 10px;
+  font-size: 14px; outline: none;
+  transition: border-color .15s;
+  font-family: inherit; width: 100%; box-sizing: border-box;
+}
+.cw-input:focus { border-color: #1D9E75; }
+.cw-start-btn {
+  padding: 11px; background: #1D9E75;
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: background .15s; font-family: inherit;
+}
+.cw-start-btn:hover { background: #0F6E56; }
+
+/* Area pesan */
+.cw-messages {
+  flex: 1; overflow-y: auto;
+  padding: 14px 12px;
+  display: flex; flex-direction: column; gap: 8px;
+  scroll-behavior: smooth;
+}
+.cw-messages::-webkit-scrollbar { width: 4px; }
+.cw-messages::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
+
+/* Bubble */
+.msg-row {
+  display: flex; align-items: flex-end; gap: 6px;
+  animation: slideUp .2s ease;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.msg-row.from-me { flex-direction: row-reverse; }
+.msg-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.from-admin .msg-avatar { background: #d1fae5; }
+.from-bot   .msg-avatar { background: #dbeafe; }
+
+.msg-bubble {
+  max-width: 76%;
+  padding: 9px 12px; border-radius: 16px;
+  font-size: 13px; line-height: 1.55;
+  word-break: break-word;
+}
+.from-admin .msg-bubble { background: #0F6E56; color: #fff; border-bottom-left-radius: 4px; }
+.from-bot   .msg-bubble { background: #f3f4f6; color: #111; border-bottom-left-radius: 4px; }
+.from-me    .msg-bubble { background: #1D9E75; color: #fff; border-bottom-right-radius: 4px; }
+
+/* Label bot/admin kecil */
+.msg-sender-label {
+  font-size: 10px; color: #aaa; margin-bottom: 2px; padding-left: 2px;
+}
+.from-me .msg-sender-label { display: none; }
+
+.msg-time { font-size: 10px; color: #bbb; margin-top: 3px; padding: 0 2px; display: block; }
+.from-me .msg-time { text-align: right; color: rgba(255,255,255,.6); }
+.from-bot .msg-time { color: #bbb; }
+
+/* Pesan sistem */
+.msg-sistem {
+  text-align: center; font-size: 11px;
+  color: #aaa; padding: 4px 0;
+}
+.msg-sistem.eskalasi {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 8px 12px;
+  color: #92400e;
+  font-size: 12px; font-weight: 500;
+}
+
+/* Typing indicator */
+.typing-indicator { display: none; padding: 0 12px 6px; }
+.typing-indicator.show { display: flex; }
+.typing-dots {
+  display: flex; gap: 4px;
+  padding: 10px 14px; background: #f3f4f6;
+  border-radius: 16px; border-bottom-left-radius: 4px;
+}
+.typing-dots span {
+  width: 7px; height: 7px; background: #aaa; border-radius: 50%;
+  animation: bounce 1.2s infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: .2s; }
+.typing-dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+/* Tombol Hubungi Admin (muncul saat mode bot) */
+.cw-eskalasi-bar {
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-top: 1px solid #f3f4f6;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.cw-eskalasi-bar span { font-size: 11px; color: #888; }
+.cw-eskalasi-btn {
+  font-size: 11px; font-weight: 600;
+  color: #1D9E75;
+  background: #f0fdf6;
+  border: 1.5px solid #6ee7b7;
+  border-radius: 20px;
+  padding: 4px 12px;
+  cursor: pointer; white-space: nowrap;
+  transition: background .15s;
+  font-family: inherit;
+}
+.cw-eskalasi-btn:hover { background: #dcfce7; }
+
+/* Banner setelah eskalasi */
+.cw-admin-banner {
+  display: none;
+  background: linear-gradient(135deg, #fffbeb, #fef9c3);
+  border-top: 1px solid #fde68a;
+  padding: 8px 14px;
+  font-size: 12px; color: #92400e;
+  text-align: center; flex-shrink: 0;
+}
+.cw-admin-banner.show { display: block; }
+
+/* Input area */
+.cw-input-area {
+  display: flex; gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid #f3f4f6;
+  background: #fff;
+  border-radius: 0 0 22px 22px;
+  flex-shrink: 0;
+}
+.cw-msg-input {
+  flex: 1; padding: 9px 12px;
+  border: 1.5px solid #e5e7eb; border-radius: 20px;
+  font-size: 13px; outline: none; resize: none;
+  font-family: inherit; transition: border-color .15s;
+  max-height: 80px; line-height: 1.4;
+}
+.cw-msg-input:focus { border-color: #1D9E75; }
+.cw-send-btn {
+  width: 38px; height: 38px;
+  background: #1D9E75; border: none; border-radius: 50%;
+  color: #fff; font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background .15s, transform .1s;
+}
+.cw-send-btn:hover { background: #0F6E56; transform: scale(1.08); }
+.cw-send-btn:disabled { background: #e5e7eb; cursor: not-allowed; transform: none; }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .chat-window { width: calc(100vw - 20px); right: 10px; bottom: 10px; }
+}
+
+/* ============================================================
+   POPUP PESANAN
+   ============================================================ */
+.popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; overflow-y:auto; }
+.popup.aktif { display:flex; align-items:flex-start; justify-content:center; padding:20px; }
+.popup-content { background:#fff; border-radius:16px; padding:24px; width:100%; max-width:480px; margin:auto; }
+.pm-section-title { font-size:11px; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:.07em; margin:14px 0 8px; }
+.pm-option { display:flex; align-items:center; gap:12px; padding:11px 14px; border:1.5px solid #eee; border-radius:10px; cursor:pointer; margin-bottom:8px; transition:border-color .15s,background .15s; }
+.pm-option:hover { border-color:#1D9E75; background:#f7fff9; }
+.pm-option.selected { border-color:#1D9E75; background:#f0fdf6; }
+.pm-radio { width:18px; height:18px; border-radius:50%; border:1.5px solid #ccc; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.pm-option.selected .pm-radio { border-color:#1D9E75; }
+.pm-radio-dot { width:9px; height:9px; border-radius:50%; background:#1D9E75; display:none; }
+.pm-option.selected .pm-radio-dot { display:block; }
+.pm-logo { width:42px; height:28px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; flex-shrink:0; }
+.pm-label { flex:1; }
+.pm-name { font-size:14px; font-weight:500; color:#222; }
+.pm-desc { font-size:12px; color:#888; margin-top:1px; }
+.pm-badge { font-size:10px; padding:2px 7px; border-radius:20px; margin-left:6px; font-weight:600; }
+.badge-green { background:#d1fae5; color:#065f46; }
+.badge-blue  { background:#dbeafe; color:#1e40af; }
+.pm-detail { border:1px solid #eee; border-radius:10px; background:#f9fafb; padding:14px; margin-top:2px; margin-bottom:8px; display:none; }
+.pm-detail.open { display:block; }
+.pm-detail-title { font-size:12px; color:#666; margin-bottom:10px; }
+.sub-option { display:flex; align-items:center; gap:10px; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; cursor:pointer; margin-bottom:7px; transition:border-color .15s; }
+.sub-option:last-child { margin-bottom:0; }
+.sub-option:hover { border-color:#1D9E75; }
+.sub-option.selected { border:1.5px solid #1D9E75; background:#f0fdf6; }
+.sub-logo { width:36px; height:24px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:#fff; flex-shrink:0; }
+.sub-info { flex:1; }
+.sub-name { font-size:13px; font-weight:500; color:#222; }
+.sub-acc { font-size:11px; color:#888; margin-top:1px; }
+.sub-arrow { font-size:16px; color:#bbb; }
+.pm-summary { background:#f3f4f6; border-radius:10px; padding:12px 14px; margin-bottom:16px; font-size:13px; }
+.pm-summary-row { display:flex; justify-content:space-between; padding:3px 0; color:#555; }
+.pm-summary-total { display:flex; justify-content:space-between; padding:8px 0 0; border-top:1px solid #e5e7eb; margin-top:6px; font-weight:600; font-size:15px; color:#111; }
+.pm-btn { width:100%; padding:13px; border-radius:10px; border:none; background:#1D9E75; color:#fff; font-size:15px; font-weight:600; cursor:pointer; margin-top:12px; transition:background .15s; }
+.pm-btn:hover { background:#15795a; }
+.pm-btn:disabled { background:#d1d5db; cursor:not-allowed; color:#9ca3af; }
+.pm-btn-cancel { width:100%; padding:11px; border-radius:10px; border:1.5px solid #e5e7eb; background:#fff; color:#555; font-size:14px; font-weight:500; cursor:pointer; margin-top:8px; }
+.qris-placeholder { display:flex; flex-direction:column; align-items:center; padding:12px 0; }
+.qris-note { font-size:11px; color:#888; margin-top:8px; text-align:center; }
+.form-box { font-family: inherit; }
+.form-box h2 { font-size:18px; font-weight:700; margin-bottom:16px; color:#111; }
+.form-box input, .form-box select { width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:14px; margin-bottom:10px; outline:none; transition:border-color .15s; background:#fff; color:#111; box-sizing:border-box; }
+.form-box input:focus, .form-box select:focus { border-color:#1D9E75; }
+.form-box label { font-size:13px; color:#555; font-weight:500; display:block; margin-bottom:4px; }
+.row { display:flex; gap:10px; margin-bottom:10px; }
+.row select { margin-bottom:0; }
+.ringkasan { background:#f0fdf6; border-radius:10px; padding:12px 14px; margin:10px 0; font-size:13px; }
+.ringkasan p { color:#555; margin-bottom:4px; }
+.ringkasan h3 { font-size:15px; font-weight:700; color:#0F6E56; }
+.btn-lokasi { width:100%; padding:9px; border-radius:8px; border:1.5px solid #1D9E75; background:#fff; color:#1D9E75; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:10px; }
+.btn-group { display:flex; gap:10px; margin-top:4px; }
+.btn-primary { flex:1; padding:12px; border-radius:10px; border:none; background:#1D9E75; color:#fff; font-size:15px; font-weight:600; cursor:pointer; }
+.btn-secondary { flex:1; padding:12px; border-radius:10px; border:1.5px solid #e5e7eb; background:#fff; color:#555; font-size:14px; font-weight:500; cursor:pointer; }
+.info-kendaraan { border-radius:10px; padding:12px 14px; margin:4px 0 10px; font-size:13px; line-height:1.7; display:none; }
+.info-kendaraan.motor  { background:#f0fdf6; border:1.5px solid #6ee7b7; color:#065f46; }
+.info-kendaraan.pickup { background:#fff7ed; border:1.5px solid #fcd34d; color:#92400e; }
+.info-kendaraan.show { display:block; }
+.sukses-box { background:#fff; border-radius:14px; border:1px solid #e5e7eb; padding:24px 20px; margin-top:12px; text-align:center; display:none; }
+.sukses-box.open { display:block; }
+.sk-icon { font-size:48px; margin-bottom:10px; }
+.sk-title { font-size:18px; font-weight:700; color:#0F6E56; margin-bottom:6px; }
+.sk-sub { font-size:13px; color:#555; margin-bottom:18px; line-height:1.6; }
+.sk-id-box { background:#f0fdf6; border:1.5px solid #6ee7b7; border-radius:12px; padding:16px; margin-bottom:18px; }
+.sk-id-label { font-size:12px; color:#6b7280; margin-bottom:4px; }
+.sk-id-num { font-size:28px; font-weight:800; color:#0F6E56; letter-spacing:.05em; }
+.sk-id-hp { font-size:12px; color:#6b7280; margin-top:4px; }
+.sk-warning { font-size:12px; background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 12px; color:#92400e; margin-bottom:14px; text-align:left; line-height:1.5; }
+.track-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:13px; border-radius:10px; border:none; background:#1D9E75; color:#fff; font-size:15px; font-weight:600; cursor:pointer; margin-top:4px; text-decoration:none; }
+.track-btn:hover { background:#15795a; }
+@keyframes spin { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+ 
+
+<header style="background: linear-gradient(135deg, #2d6a2d 0%, #143d14 100%); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; min-height: 80px;">
+
+  <!-- Logo kiri -->
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="logo/NEW.png" alt="Bumi Kelapa" style="height: 215px;">
+  </div>
+
+  <!-- Tombol kanan -->
+  <div style="display: flex; gap: 10px; align-items: center;">
+
+    <button class="chat-trigger-btn" onclick="toggleChat()" id="chatTriggerBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+      </svg>
+      <span>Chat Admin</span>
+      <span class="chat-notif-bubble" id="chatNotifBubble"></span>
+    </button>
+
+    <a href="status.html" style="display:flex;align-items:center;gap:7px;padding:8px 16px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.4);border-radius:22px;color:#fff;font-size:13px;font-weight:600;text-decoration:none;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+      </svg>
+      Lacak Pesanan
+    </a>
+
+    <div onclick="bukaKeranjang()" style="display:flex;align-items:center;gap:7px;padding:8px 16px;background:#c8b87a;border:none;border-radius:22px;color:#1a3a1a;font-size:13px;font-weight:700;cursor:pointer;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+      </svg>
+      Keranjang (<span id="jumlahKeranjang">0</span>)
+    </div>
+
+  </div>
+</header>
+
+
+<nav>
+  <a href="index.html" >Beranda</a>
+  <a href="produk.html"class="active">Produk</a>
+  <a href="galeri.html">Galeri</a>
+  <a href="tentang.html">Tentang Kami</a>
+  <a href="kontak.html">Kontak</a>
+</nav>
+
+
+<!-- ★ CHAT WINDOW ★ -->
+<div class="chat-overlay" id="chatOverlay" onclick="handleOverlayClick(event)">
+  <div class="chat-window" id="chatWindow">
+
+    <!-- Head -->
+    <div class="cw-head">
+      <div class="cw-avatar" id="cwAvatar">🤖</div>
+      <div class="cw-head-info">
+        <div class="cw-head-name">Bumi Kelapa</div>
+        <div class="cw-head-status">
+          <div class="cw-dot"></div>
+          <span id="cwStatusText">Koko siap membantu</span>
+          <span class="cw-mode-badge mode-bot" id="cwModeBadge">🤖 Chatbot</span>
+        </div>
+      </div>
+      <button class="cw-close" onclick="tutupChat()">✕</button>
+    </div>
+
+    <!-- Form nama (tampil pertama kali) -->
+    <div class="cw-form-nama" id="cwFormNama">
+      <div class="cw-welcome-icon">🌴</div>
+      <p style="text-align:center;font-weight:600;color:#0F6E56;font-size:14px;">Halo! Selamat datang di Bumi Kelapa</p>
+      <p style="text-align:center;">Saya <strong>Koko</strong>, asisten virtual kami, siap menjawab pertanyaan Anda. Kenalkan diri Anda dulu ya!</p>
+      <input class="cw-input" type="text" id="cwNamaInput" placeholder="Nama Anda" maxlength="60">
+      <input class="cw-input" type="tel"  id="cwHpInput"   placeholder="Nomor HP (opsional)" maxlength="20">
+      <button class="cw-start-btn" onclick="mulaiChat()">Mulai Chat →</button>
+    </div>
+
+    <!-- Area pesan -->
+    <div class="cw-messages" id="cwMessages" style="display:none"></div>
+
+    <!-- Typing indicator -->
+    <div class="msg-row from-bot typing-indicator" id="cwTyping" style="padding:0 12px 6px;">
+      <div class="msg-avatar">🤖</div>
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- Banner mode admin -->
+    <div class="cw-admin-banner" id="cwAdminBanner">
+      👨‍💼 Anda sedang terhubung dengan <strong>Admin</strong>. Admin akan segera membalas.
+    </div>
+
+    <!-- Bar eskalasi (tampil saat mode bot) -->
+    <div class="cw-eskalasi-bar" id="cwEskalasiBar" style="display:none">
+      <span>Perlu bicara dengan manusia?</span>
+      <button class="cw-eskalasi-btn" onclick="eskalasiKeAdmin()">👨‍💼 Hubungi Admin</button>
+    </div>
+
+    <!-- Input pesan -->
+    <div class="cw-input-area" id="cwInputArea" style="display:none">
+      <textarea class="cw-msg-input" id="cwMsgInput" placeholder="Ketik pesan..." rows="1"
+        onkeydown="handleChatKey(event)" oninput="autoResizeTextarea(this)"></textarea>
+      <button class="cw-send-btn" id="cwSendBtn" onclick="kirimPesan()" title="Kirim">➤</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== KONTEN PRODUK ===== -->
+<div class="container">
+  <h2>Produk Kami</h2>
+  <div class="products">
+
+    <div class="card">
+      <h3>Kelapa sudah dikupas</h3>
+      <p>stock 300 buah.</p>
+      <p class="harga">Rp 5.000</p>
+      <div class="jumlah">
+        <button onclick="kurang(this)">-</button>
+        <span class="qty">1</span>
+        <button onclick="tambah(this)">+</button>
+      </div>
+      <div class="btn-produk">
+        <button onclick="tambahKeranjang('Kelapa sudah dikupas',5000,this)">+ Keranjang</button>
+        <button onclick="bukaFormPesanan('Kelapa sudah dikupas',5000,this,'kelapa')">Pesan</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Sabut Kelapa</h3>
+      <p>stock 10 karung.</p>
+      <p class="harga">Rp 25.000</p>
+      <div class="jumlah">
+        <button onclick="kurang(this)">-</button>
+        <span class="qty">1</span>
+        <button onclick="tambah(this)">+</button>
+      </div>
+      <div class="btn-produk">
+        <button onclick="tambahKeranjang('Sabut Kelapa',25000,this)">+ Keranjang</button>
+        <button onclick="bukaFormPesanan('Sabut Kelapa',25000,this,'sabut')">Pesan</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Tempurung Kelapa</h3>
+      <p>stock 5 karung.</p>
+      <p class="harga">Rp 50.000</p>
+      <div class="jumlah">
+        <button onclick="kurang(this)">-</button>
+        <span class="qty">1</span>
+        <button onclick="tambah(this)">+</button>
+      </div>
+      <div class="btn-produk">
+        <button onclick="tambahKeranjang('Tempurung Kelapa',50000,this)">+ Keranjang</button>
+        <button onclick="bukaFormPesanan('Tempurung Kelapa',50000,this,'tempurung')">Pesan</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Paket Karung 50kg</h3>
+      <p>Isi 100 buah/karung.</p>
+      <p class="harga">Rp 500.000</p>
+      <div class="jumlah">
+        <button onclick="kurang(this)">-</button>
+        <span class="qty">1</span>
+        <button onclick="tambah(this)">+</button>
+      </div>
+      <div class="btn-produk">
+        <button onclick="tambahKeranjang('Paket Karung',500000,this)">+ Keranjang</button>
+        <button onclick="bukaFormPesananPaket('Paket Karung',500000,this)">Pesan</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- POPUP KERANJANG -->
+<div id="popupKeranjang" class="popup">
+  <div class="popup-content">
+    <h3>Keranjang Belanja</h3>
+    <div id="isiKeranjang"></div>
+    <p>Total: <b id="totalHarga">Rp 0</b></p>
+    <button onclick="checkout()">Checkout</button>
+    <button onclick="tutupKeranjang()">Tutup</button>
+  </div>
+</div>
+
+<!-- POPUP FORM DATA PEMBELI -->
+<div id="popupLogin" class="popup">
+  <div class="popup-content form-box">
+    <h2>Data Pembeli</h2>
+    <input type="text" id="namaPembeli" placeholder="Nama Anda">
+    <div class="row">
+      <select id="kecamatan" onchange="isiKelurahan()">
+        <option value="">-- Pilih Kecamatan --</option>
+        <option value="nusaniwe">Nusaniwe</option>
+        <option value="sirimau">Sirimau</option>
+        <option value="teluk ambon">Teluk Ambon</option>
+        <option value="baguala">Baguala</option>
+        <option value="leitimur selatan">Leitimur Selatan</option>
+      </select>
+      <select id="kelurahan" onchange="hitungOngkir()">
+        <option value="">-- Pilih Kelurahan --</option>
+      </select>
+    </div>
+    <label>Alamat Lengkap</label>
+    <input type="text" id="alamatDetail" placeholder="Contoh: Kompleks Unpatti Blok A No 5">
+    <button onclick="ambilLokasi()" class="btn-lokasi">📍 Gunakan Lokasi Saya</button>
+    <label>Jenis Produk yang Dipesan</label>
+    <select id="jenisProduk" onchange="hitungOngkir()">
+      <option value="kelapa">Kelapa (buah)</option>
+      <option value="sabut">Sabut Kelapa (karung)</option>
+      <option value="tempurung">Tempurung Kelapa (karung)</option>
+      <option value="paket">Paket Karung (100 buah/karung)</option>
+    </select>
+    <label>Jumlah Pesanan</label>
+    <input type="number" id="jumlahProduk" min="1" placeholder="Masukkan jumlah" oninput="hitungOngkir()">
+    <div id="infoKendaraan" class="info-kendaraan"></div>
+    <div class="ringkasan">
+      <p>Harga Barang: <span id="hargaBarang">Rp 0</span></p>
+      <p>Ongkir (<span id="labelKendaraan">-</span>): <span id="ongkir">Rp 0</span></p>
+      <h3>Total Bayar: <span id="totalBayar">Rp 0</span></h3>
+    </div>
+    <input type="tel" id="hpPembeli" placeholder="Nomor HP (contoh: 0812xxxxxx)">
+    <div class="btn-group">
+      <button class="btn-primary" onclick="lanjutKePembayaran()">Lanjut ke Pembayaran →</button>
+      <button class="btn-secondary" onclick="tutupLogin()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP METODE PEMBAYARAN -->
+<div id="popupPembayaran" class="popup">
+  <div class="popup-content form-box">
+    <h2>💳 Pilih Pembayaran</h2>
+    <div class="pm-summary">
+      <div class="pm-summary-row"><span id="pmItemName">Produk</span><span id="pmItemPrice">Rp 0</span></div>
+      <div class="pm-summary-row"><span id="pmLabelOngkir">Ongkir</span><span id="pmOngkir">Rp 0</span></div>
+      <div class="pm-summary-total"><span>Total Bayar</span><span id="pmTotal">Rp 0</span></div>
+    </div>
+    <div class="pm-section-title">Dompet Digital</div>
+    <div class="pm-option" onclick="pilihMetode('ewallet','gopay',this)"><div class="pm-radio"><div class="pm-radio-dot"></div></div><div class="pm-logo" style="background:#00AED6">GP</div><div class="pm-label"><div class="pm-name">GoPay <span class="pm-badge badge-green">Instan</span></div><div class="pm-desc">Buka otomatis di aplikasi Gojek</div></div></div>
+    <div class="pm-option" onclick="pilihMetode('ewallet','ovo',this)"><div class="pm-radio"><div class="pm-radio-dot"></div></div><div class="pm-logo" style="background:#4C3494">OVO</div><div class="pm-label"><div class="pm-name">OVO <span class="pm-badge badge-green">Instan</span></div><div class="pm-desc">Bayar langsung lewat OVO</div></div></div>
+    <div class="pm-option" onclick="pilihMetode('ewallet','dana',this)"><div class="pm-radio"><div class="pm-radio-dot"></div></div><div class="pm-logo" style="background:#118EEA">DANA</div><div class="pm-label"><div class="pm-name">DANA <span class="pm-badge badge-green">Instan</span></div><div class="pm-desc">Bayar langsung lewat DANA</div></div></div>
+    <div class="pm-option" onclick="pilihMetode('ewallet','shopeepay',this)"><div class="pm-radio"><div class="pm-radio-dot"></div></div><div class="pm-logo" style="background:#EE4D2D">SPay</div><div class="pm-label"><div class="pm-name">ShopeePay <span class="pm-badge badge-green">Instan</span></div><div class="pm-desc">Buka otomatis di aplikasi Shopee</div></div></div>
+    <div class="pm-option" onclick="pilihMetode('ewallet','linkaja',this)"><div class="pm-radio"><div class="pm-radio-dot"></div></div><div class="pm-logo" style="background:#E82529">LA</div><div class="pm-label"><div class="pm-name">LinkAja <span class="pm-badge badge-green">Instan</span></div><div class="pm-desc">Bayar langsung lewat LinkAja</div></div></div>
+    <div class="pm-section-title">QRIS</div>
+    <div class="pm-option" onclick="pilihMetode('qris','',this)"><div class="pm-radio"><div class="pm-radio-dot"></div></div><div class="pm-logo" style="background:#E2231A">QRIS</div><div class="pm-label"><div class="pm-name">QRIS <span class="pm-badge badge-blue">Semua Bank & E-Wallet</span></div><div class="pm-desc">Scan di m-Banking, GoPay, OVO, DANA, dll</div></div></div>
+    <div class="pm-detail" id="detail-qris">
+      <div class="pm-detail-title">Scan QR ini menggunakan m-Banking atau E-Wallet Anda:</div>
+      <div class="qris-placeholder">
+        <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg"><rect width="140" height="140" fill="white" rx="8"/><rect x="12" y="12" width="46" height="46" fill="none" stroke="#1a1a1a" stroke-width="5" rx="4"/><rect x="22" y="22" width="26" height="26" fill="#1a1a1a" rx="2"/><rect x="82" y="12" width="46" height="46" fill="none" stroke="#1a1a1a" stroke-width="5" rx="4"/><rect x="92" y="22" width="26" height="26" fill="#1a1a1a" rx="2"/><rect x="12" y="82" width="46" height="46" fill="none" stroke="#1a1a1a" stroke-width="5" rx="4"/><rect x="22" y="92" width="26" height="26" fill="#1a1a1a" rx="2"/><text x="70" y="135" text-anchor="middle" font-size="8" fill="#999" font-family="sans-serif">QRIS — Bumi Kelapa</text></svg>
+        <p class="qris-note">⚠️ Ganti gambar ini dengan QRIS resmi toko Anda</p>
+      </div>
+    </div>
+    <div class="pm-section-title">Transfer Bank</div>
+    <div class="pm-option" onclick="pilihMetode('transfer','',this)"><div class="pm-radio"><div class="pm-radio-dot"></div></div><div class="pm-logo" style="background:#003d79">TRF</div><div class="pm-label"><div class="pm-name">Transfer Bank</div><div class="pm-desc">BCA · Mandiri · BNI · BRI · BSI</div></div></div>
+    <div class="pm-detail" id="detail-transfer">
+      <div class="pm-detail-title">Pilih bank tujuan transfer:</div>
+      <div class="sub-option" onclick="pilihBank(this,'BCA','1234567890')"><div class="sub-logo" style="background:#005BAA">BCA</div><div class="sub-info"><div class="sub-name">Bank BCA</div><div class="sub-acc">1234 5678 90 — a/n Bumi Kelapa</div></div><span class="sub-arrow">›</span></div>
+      <div class="sub-option" onclick="pilihBank(this,'Mandiri','8888000111222')"><div class="sub-logo" style="background:#003F87">MDR</div><div class="sub-info"><div class="sub-name">Bank Mandiri</div><div class="sub-acc">888 8000 1112 22 — a/n Bumi Kelapa</div></div><span class="sub-arrow">›</span></div>
+      <div class="sub-option" onclick="pilihBank(this,'BNI','7788991122')"><div class="sub-logo" style="background:#F58220">BNI</div><div class="sub-info"><div class="sub-name">Bank BNI</div><div class="sub-acc">7788 991 122 — a/n Bumi Kelapa</div></div><span class="sub-arrow">›</span></div>
+      <div class="sub-option" onclick="pilihBank(this,'BRI','00560101123456789')"><div class="sub-logo" style="background:#0070C0">BRI</div><div class="sub-info"><div class="sub-name">Bank BRI</div><div class="sub-acc">0056 0101 1234 5678 9 — a/n Bumi Kelapa</div></div><span class="sub-arrow">›</span></div>
+      <div class="sub-option" onclick="pilihBank(this,'BSI','7175001234')"><div class="sub-logo" style="background:#28A745">BSI</div><div class="sub-info"><div class="sub-name">Bank BSI</div><div class="sub-acc">7175 001 234 — a/n Bumi Kelapa</div></div><span class="sub-arrow">›</span></div>
+    </div>
+    <div class="pm-section-title">Bayar di Tempat</div>
+    <div class="pm-option" onclick="pilihMetode('cod','',this)"><div class="pm-radio"><div class="pm-radio-dot"></div></div><div class="pm-logo" style="background:#6b7280">COD</div><div class="pm-label"><div class="pm-name">COD (Bayar di Tempat)</div><div class="pm-desc">Bayar tunai saat barang tiba</div></div></div>
+    <button class="pm-btn" id="btnBayar" disabled onclick="prosesPesanan()">Pilih Metode Pembayaran</button>
+    <button class="pm-btn-cancel" onclick="tutupPembayaran()">← Kembali</button>
+    <div class="sukses-box" id="suksesBox">
+      <div class="sk-icon">🎉</div>
+      <div class="sk-title">Pesanan Berhasil!</div>
+      <div class="sk-sub">Pesanan Anda telah kami terima.<br>Simpan ID pesanan di bawah untuk melacak status pengiriman.</div>
+      <div class="sk-id-box">
+        <div class="sk-id-label">ID Pesanan Anda</div>
+        <div class="sk-id-num" id="skIdNum">#-</div>
+        <div class="sk-id-hp" id="skIdHp">HP: -</div>
+      </div>
+      <div class="sk-warning">⚠️ <strong>Catat ID pesanan ini!</strong> ID diperlukan untuk melacak status pesanan Anda.</div>
+      <a class="track-btn" id="trackBtn" href="#">🔍 Lacak Status Pesanan</a>
+      <button class="pm-btn-cancel" style="margin-top:8px" onclick="selesaiBelanja()">Selesai Belanja</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const API_PESAN  = 'Pesan.php';
+const API_STATUS = 'status.html';
+const API_CHAT   = 'chat.php';
+
+// ============================================================
+// ★★★ SISTEM CHAT DENGAN CHATBOT ★★★
+// ============================================================
+let chatSessionId    = null;
+let chatNama         = '';
+let chatHp           = '';
+let chatIdTerakhir   = 0;
+let chatPollingTimer = null;
+let chatOpen         = false;
+let chatMode         = 'bot'; // 'bot' | 'eskalasi' | 'admin'
+
+function getChatSession() {
+  let sid = localStorage.getItem('bk_chat_sid');
+  if (!sid) {
+    sid = 'bk-' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
+    localStorage.setItem('bk_chat_sid', sid);
+  }
+  return sid;
+}
+
+function toggleChat() { chatOpen ? tutupChat() : bukaChat(); }
+
+function bukaChat() {
+  chatOpen = true;
+  document.getElementById('chatOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('chatWindow').classList.add('open'), 10);
+
+  const namaTersimpan = localStorage.getItem('bk_chat_nama');
+  if (namaTersimpan) {
+    chatNama      = namaTersimpan;
+    chatHp        = localStorage.getItem('bk_chat_hp') || '';
+    chatSessionId = getChatSession();
+    tampilAreaChat();
+    muatPesanChat();
+    startPolling();
+  } else {
+    document.getElementById('cwFormNama').style.display  = 'flex';
+    document.getElementById('cwMessages').style.display  = 'none';
+    document.getElementById('cwInputArea').style.display = 'none';
+    document.getElementById('cwEskalasiBar').style.display = 'none';
+  }
+
+  // Hapus notif bubble
+  const bubble = document.getElementById('chatNotifBubble');
+  bubble.textContent = '';
+  bubble.classList.remove('show');
+}
+
+function tutupChat() {
+  chatOpen = false;
+  document.getElementById('chatWindow').classList.remove('open');
+  setTimeout(() => document.getElementById('chatOverlay').classList.remove('open'), 260);
+  stopPolling();
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('chatOverlay')) tutupChat();
+}
+
+function mulaiChat() {
+  const nama = document.getElementById('cwNamaInput').value.trim();
+  if (!nama) { document.getElementById('cwNamaInput').focus(); return; }
+  chatNama      = nama;
+  chatHp        = document.getElementById('cwHpInput').value.trim();
+  chatSessionId = getChatSession();
+  localStorage.setItem('bk_chat_nama', chatNama);
+  localStorage.setItem('bk_chat_hp',   chatHp);
+  tampilAreaChat();
+  appendSistemMsg('Sesi chat dimulai. Koko siap membantu Anda! 🤖');
+  // Kirim pesan sambutan dari bot
+  setTimeout(() => {
+    const waktu = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    appendBubble('bot', `Halo Kak ${chatNama}! 👋 Saya Koko, asisten virtual Bumi Kelapa. Ada yang bisa saya bantu hari ini? 🌴`, waktu, Date.now());
+    scrollChatBawah();
+  }, 600);
+  startPolling();
+}
+
+function tampilAreaChat() {
+  document.getElementById('cwFormNama').style.display  = 'none';
+  document.getElementById('cwMessages').style.display  = 'flex';
+  document.getElementById('cwInputArea').style.display = 'flex';
+  document.getElementById('cwEskalasiBar').style.display = 'flex';
+  document.getElementById('cwMsgInput').focus();
+}
+
+function updateUIMode(mode) {
+  chatMode = mode;
+  const badge      = document.getElementById('cwModeBadge');
+  const avatar     = document.getElementById('cwAvatar');
+  const statusText = document.getElementById('cwStatusText');
+  const eskBar     = document.getElementById('cwEskalasiBar');
+  const adminBanner = document.getElementById('cwAdminBanner');
+
+  if (mode === 'bot') {
+    badge.textContent = '🤖 Chatbot';
+    badge.className   = 'cw-mode-badge mode-bot';
+    avatar.textContent = '🤖';
+    statusText.textContent = 'Koko siap membantu';
+    eskBar.style.display = 'flex';
+    adminBanner.classList.remove('show');
+  } else if (mode === 'eskalasi') {
+    badge.textContent = '⏳ Menunggu Admin';
+    badge.className   = 'cw-mode-badge mode-eskalasi';
+    avatar.textContent = '🌴';
+    statusText.textContent = 'Menunggu admin';
+    eskBar.style.display = 'none';
+    adminBanner.classList.add('show');
+  } else if (mode === 'admin') {
+    badge.textContent = '👨‍💼 Admin';
+    badge.className   = 'cw-mode-badge mode-admin';
+    avatar.textContent = '👨‍💼';
+    statusText.textContent = 'Admin sedang membalas';
+    eskBar.style.display = 'none';
+    adminBanner.classList.add('show');
+  }
+}
+
+// ---- Eskalasi manual ke admin ----
+async function eskalasiKeAdmin() {
+  try {
+    await fetch(API_CHAT, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ aksi:'eskalasi', session_id: chatSessionId })
+    });
+    updateUIMode('eskalasi');
+    appendSistemMsg('⚡ Anda dihubungkan ke admin. Mohon tunggu sebentar.', true);
+    scrollChatBawah();
+  } catch(e) {}
+}
+
+// ---- Muat pesan dari server ----
+async function muatPesanChat() {
+  if (!chatSessionId) return;
+  try {
+    const url  = `${API_CHAT}?aksi=ambil&session_id=${encodeURIComponent(chatSessionId)}&sejak_id=${chatIdTerakhir}&nama=${encodeURIComponent(chatNama)}&hp=${encodeURIComponent(chatHp)}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+    if (!data.sukses) return;
+
+    // Update mode UI jika berubah
+    if (data.mode && data.mode !== chatMode) updateUIMode(data.mode);
+
+    data.pesan.forEach(p => {
+      // Skip duplikat (pesan yang sudah ditampilkan optimistic)
+      if (document.querySelector(`[data-msg-id="${p.id}"]`)) return;
+      appendBubble(p.pengirim, p.pesan, p.waktu, p.id);
+      if (parseInt(p.id) > chatIdTerakhir) chatIdTerakhir = parseInt(p.id);
+    });
+
+    if (data.pesan.length > 0) scrollChatBawah();
+  } catch(e) { /* diam */ }
+}
+
+// ---- Kirim pesan ----
+async function kirimPesan() {
+  const input = document.getElementById('cwMsgInput');
+  const teks  = input.value.trim();
+  if (!teks || !chatSessionId) return;
+
+  input.value = '';
+  input.style.height = '';
+
+  const waktuNow = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  const tempId   = 'tmp-' + Date.now();
+
+  // Tampilkan pesan user segera (optimistic)
+  appendBubble('pembeli', teks, waktuNow, tempId);
+  scrollChatBawah();
+
+  // Tampilkan typing indicator jika mode bot
+  if (chatMode === 'bot') tampilTyping(true);
+
+  try {
+    const res  = await fetch(API_CHAT, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        aksi: 'kirim', session_id: chatSessionId,
+        pengirim: 'pembeli', pesan: teks,
+        nama: chatNama, hp: chatHp
+      })
+    });
+    const data = await res.json();
+    tampilTyping(false);
+
+    if (data.sukses) {
+      // Update id optimistic ke id asli
+      const tmpEl = document.querySelector(`[data-msg-id="${tempId}"]`);
+      if (tmpEl && data.id) tmpEl.dataset.msgId = data.id;
+      if (data.id > chatIdTerakhir) chatIdTerakhir = data.id;
+
+      // Tampilkan balasan bot jika ada
+      if (data.balasan_bot) {
+        const wkt = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+        appendBubble('bot', data.balasan_bot, wkt, Date.now());
+        scrollChatBawah();
+      }
+
+      // Handle eskalasi
+      if (data.eskalasi) {
+        updateUIMode('eskalasi');
+        appendSistemMsg('⚡ Anda dihubungkan ke admin. Mohon tunggu sebentar.', true);
+        scrollChatBawah();
+      }
+    }
+  } catch(e) {
+    tampilTyping(false);
+  }
+}
+
+function tampilTyping(show) {
+  const el = document.getElementById('cwTyping');
+  el.style.display = show ? 'flex' : 'none';
+  if (show) scrollChatBawah();
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); kirimPesan(); }
+}
+
+function autoResizeTextarea(el) {
+  el.style.height = '';
+  el.style.height = Math.min(el.scrollHeight, 80) + 'px';
+}
+
+// ---- Render bubble ----
+function appendBubble(pengirim, pesan, waktu, id) {
+  const container = document.getElementById('cwMessages');
+  const isMe = pengirim === 'pembeli';
+  const isBot = pengirim === 'bot';
+  const isAdmin = pengirim === 'admin';
+
+  const div = document.createElement('div');
+  div.className = `msg-row ${isMe ? 'from-me' : (isBot ? 'from-bot' : 'from-admin')}`;
+  div.dataset.msgId = id;
+
+  let avatarIcon = isBot ? '🤖' : '👨‍💼';
+  let senderLabel = isBot ? 'Koko (Bot)' : 'Admin';
+
+  div.innerHTML = `
+    ${!isMe ? `<div class="msg-avatar">${avatarIcon}</div>` : ''}
+    <div>
+      ${!isMe ? `<div class="msg-sender-label">${senderLabel}</div>` : ''}
+      <div class="msg-bubble">${escHtml(pesan)}</div>
+      <span class="msg-time">${waktu}</span>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+function appendSistemMsg(teks, isEskalasi = false) {
+  const container = document.getElementById('cwMessages');
+  const div = document.createElement('div');
+  div.className = isEskalasi ? 'msg-sistem eskalasi' : 'msg-sistem';
+  div.textContent = teks;
+  container.appendChild(div);
+}
+
+function scrollChatBawah() {
+  const el = document.getElementById('cwMessages');
+  el.scrollTop = el.scrollHeight;
+}
+
+function escHtml(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ---- Polling ----
+function startPolling() {
+  stopPolling();
+  chatPollingTimer = setInterval(() => muatPesanChat(), 4000);
+}
+function stopPolling() {
+  if (chatPollingTimer) { clearInterval(chatPollingTimer); chatPollingTimer = null; }
+}
+
+// ---- Notif saat chat tertutup ----
+async function cekNotifChat() {
+  const sid = localStorage.getItem('bk_chat_sid');
+  if (!sid || chatOpen) return;
+  try {
+    const res  = await fetch(`${API_CHAT}?aksi=ambil&session_id=${encodeURIComponent(sid)}&sejak_id=${chatIdTerakhir}`);
+    const data = await res.json();
+    if (!data.sukses) return;
+    const balasanBaru = data.pesan.filter(p => p.pengirim === 'admin' || p.pengirim === 'bot');
+    if (balasanBaru.length > 0) {
+      const bubble = document.getElementById('chatNotifBubble');
+      bubble.textContent = balasanBaru.length > 9 ? '9+' : balasanBaru.length;
+      bubble.classList.add('show');
+      balasanBaru.forEach(p => { if (parseInt(p.id) > chatIdTerakhir) chatIdTerakhir = parseInt(p.id); });
+    }
+  } catch(e) {}
+}
+setInterval(cekNotifChat, 10000);
+
+// ============================================================
+// KERANJANG & PESANAN
+// ============================================================
+const BATAS_MOTOR = { kelapa:30, sabut:5, tempurung:5 };
+const dataOngkir = {
+  "latuhalat":{jarak:0,tarifMotor:5000},"seilale":{jarak:1.5,tarifMotor:5000},"amahusu":{jarak:3,tarifMotor:9000},"air salobar":{jarak:4,tarifMotor:12000},"nusaniwe":{jarak:5,tarifMotor:15000},"benteng":{jarak:5.5,tarifMotor:16500},"kudamati":{jarak:6,tarifMotor:18000},"wainitu":{jarak:6.5,tarifMotor:19500},"mangga dua":{jarak:7,tarifMotor:21000},"urimessing":{jarak:7,tarifMotor:21000},"waihaong":{jarak:7.5,tarifMotor:22500},"silale":{jarak:8,tarifMotor:24000},"wakasihu":{jarak:9,tarifMotor:27000},
+  "honipopu":{jarak:8,tarifMotor:24000},"ahusen":{jarak:8.5,tarifMotor:25500},"batu meja":{jarak:9,tarifMotor:27000},"karang panjang":{jarak:9.5,tarifMotor:28500},"amantelu":{jarak:9.5,tarifMotor:28500},"rijali":{jarak:10,tarifMotor:30000},"uritetu":{jarak:10,tarifMotor:30000},"batu gajah":{jarak:10.5,tarifMotor:31500},"batu merah":{jarak:11,tarifMotor:33000},"pandan kasturi":{jarak:11,tarifMotor:33000},"galala":{jarak:12,tarifMotor:36000},"hative kecil":{jarak:12,tarifMotor:36000},"soya":{jarak:13,tarifMotor:39000},"waihoka":{jarak:13,tarifMotor:39000},
+  "poka":{jarak:13,tarifMotor:39000},"rumah tiga":{jarak:14,tarifMotor:42000},"wayame":{jarak:15,tarifMotor:45000},"hative besar":{jarak:15,tarifMotor:45000},"hunuth":{jarak:14,tarifMotor:42000},"tawiri":{jarak:17,tarifMotor:51000},"laha":{jarak:20,tarifMotor:60000},"tihu":{jarak:22,tarifMotor:66000},
+  "halong":{jarak:14,tarifMotor:42000},"lateri":{jarak:15,tarifMotor:45000},"latta":{jarak:15,tarifMotor:45000},"nania":{jarak:16,tarifMotor:48000},"negeri lama":{jarak:17,tarifMotor:51000},"passo":{jarak:17,tarifMotor:51000},"waiheru":{jarak:18,tarifMotor:54000},
+  "kilang":{jarak:10,tarifMotor:30000},"hutumuri":{jarak:12,tarifMotor:36000},"naku":{jarak:14,tarifMotor:42000},"seri":{jarak:16,tarifMotor:48000},"eirene":{jarak:18,tarifMotor:54000}
+};
+const tarifPickup = {
+  "nusaniwe":{biayaPickup:50000,perButir:500,perKarung:5000},"sirimau":{biayaPickup:75000,perButir:500,perKarung:6000},"teluk ambon":{biayaPickup:100000,perButir:1000,perKarung:8000},"baguala":{biayaPickup:100000,perButir:1000,perKarung:8000},"leitimur selatan":{biayaPickup:90000,perButir:1000,perKarung:7000}
+};
+const dataWilayah = {
+  "nusaniwe":["latuhalat","seilale","amahusu","air salobar","nusaniwe","benteng","kudamati","wainitu","mangga dua","urimessing","waihaong","silale","wakasihu"],
+  "sirimau":["honipopu","ahusen","batu meja","karang panjang","amantelu","rijali","uritetu","batu gajah","batu merah","pandan kasturi","galala","hative kecil","soya","waihoka"],
+  "teluk ambon":["poka","rumah tiga","wayame","hative besar","hunuth","tawiri","laha","tihu"],
+  "baguala":["halong","lateri","latta","nania","negeri lama","passo","waiheru"],
+  "leitimur selatan":["kilang","hutumuri","naku","seri","eirene"]
+};
+
+// Ambil keranjang dari localStorage saat halaman dibuka
+let keranjang = JSON.parse(localStorage.getItem('bk_keranjang') || '[]');
+updateJumlahKeranjang();
+let produkAktif={nama:'',harga:0,qty:1,jenis:'kelapa'};
+let ongkirAktif=0,kendaraanAktif='',metodeTerpilih=null,ewalletTerpilih=null,bankTerpilih=null;
+
+function tambah(btn){const q=btn.parentElement.querySelector('.qty');q.textContent=parseInt(q.textContent)+1;}
+function kurang(btn){const q=btn.parentElement.querySelector('.qty');if(parseInt(q.textContent)>1)q.textContent=parseInt(q.textContent)-1;}
+function tambahKeranjang(nama,harga,btn){const qty=parseInt(btn.closest('.card').querySelector('.qty').textContent);const idx=keranjang.findIndex(k=>k.nama===nama);if(idx>=0)keranjang[idx].qty+=qty;else keranjang.push({nama,harga,qty});localStorage.setItem('bk_keranjang',JSON.stringify(keranjang));updateJumlahKeranjang();alert(`${qty}x ${nama} ditambahkan ke keranjang!`);}
+function updateJumlahKeranjang(){document.getElementById('jumlahKeranjang').textContent=keranjang.reduce((a,b)=>a+b.qty,0);}
+function bukaKeranjang(){const el=document.getElementById('isiKeranjang');if(!keranjang.length){el.innerHTML='<p>Keranjang kosong.</p>';}else{let total=0,html='';keranjang.forEach((k,idx)=>{total+=k.harga*k.qty;html+=`<p>${k.nama} x${k.qty} = Rp ${(k.harga*k.qty).toLocaleString('id-ID')} <button onclick="hapusItem(${idx})" style="margin-left:8px;padding:2px 8px;background:#ef4444;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11px;">Hapus</button></p>`;});el.innerHTML=html;document.getElementById('totalHarga').textContent='Rp '+total.toLocaleString('id-ID');}document.getElementById('popupKeranjang').classList.add('aktif');}
+function hapusItem(index){keranjang.splice(index,1);localStorage.setItem('bk_keranjang',JSON.stringify(keranjang));updateJumlahKeranjang();bukaKeranjang();}
+function tutupKeranjang(){document.getElementById('popupKeranjang').classList.remove('aktif');}
+function checkout(){if(!keranjang.length)return;tutupKeranjang();produkAktif={nama:keranjang.map(k=>`${k.nama} x${k.qty}`).join(', '),harga:keranjang.reduce((a,b)=>a+b.harga*b.qty,0),qty:1,jenis:'kelapa'};bukaFormData();}
+function bukaFormPesananPaket(nama,harga,btn){const qty=parseInt(btn.closest('.card').querySelector('.qty').textContent);produkAktif={nama:nama+' ('+qty+' karung / '+(qty*100)+' buah)',harga,qty,jenis:'paket'};BATAS_MOTOR['paket']=0;bukaFormData();}
+function bukaFormPesanan(nama,harga,btn,jenis){const qty=parseInt(btn.closest('.card').querySelector('.qty').textContent);produkAktif={nama,harga,qty,jenis:jenis||'kelapa'};bukaFormData();}
+function bukaFormData(){document.getElementById('jenisProduk').value=produkAktif.jenis;document.getElementById('jumlahProduk').value=produkAktif.qty;document.getElementById('hargaBarang').textContent='Rp '+(produkAktif.harga*produkAktif.qty).toLocaleString('id-ID');ongkirAktif=0;kendaraanAktif='';document.getElementById('ongkir').textContent='Rp 0';document.getElementById('totalBayar').textContent='Rp '+(produkAktif.harga*produkAktif.qty).toLocaleString('id-ID');document.getElementById('labelKendaraan').textContent='-';const infoEl=document.getElementById('infoKendaraan');infoEl.className='info-kendaraan';infoEl.innerHTML='';document.getElementById('popupLogin').classList.add('aktif');}
+function tutupLogin(){document.getElementById('popupLogin').classList.remove('aktif');}
+function isiKelurahan(){const kec=document.getElementById('kecamatan').value;const sel=document.getElementById('kelurahan');sel.innerHTML='<option value="">-- Pilih Kelurahan --</option>';(dataWilayah[kec]||[]).forEach(k=>{const opt=document.createElement('option');opt.value=k;opt.textContent=k.replace(/\b\w/g,c=>c.toUpperCase());sel.appendChild(opt);});ongkirAktif=0;kendaraanAktif='';document.getElementById('ongkir').textContent='Rp 0';document.getElementById('labelKendaraan').textContent='-';const infoEl=document.getElementById('infoKendaraan');infoEl.className='info-kendaraan';infoEl.innerHTML='';hitungTotal();}
+function hitungOngkir(){const kelurahan=document.getElementById('kelurahan').value;const kecamatan=document.getElementById('kecamatan').value;const jenis=document.getElementById('jenisProduk').value;const jumlah=parseInt(document.getElementById('jumlahProduk').value)||0;const infoEl=document.getElementById('infoKendaraan');const labelEl=document.getElementById('labelKendaraan');if(!kelurahan||!kecamatan||jumlah<=0){ongkirAktif=0;kendaraanAktif='';document.getElementById('ongkir').textContent='Rp 0';labelEl.textContent='-';infoEl.className='info-kendaraan';infoEl.innerHTML='';hitungTotal();return;}const satuan=jenis==='kelapa'?'buah':'karung';const batasMotor=BATAS_MOTOR[jenis]??0;const dataLok=dataOngkir[kelurahan];const tp=tarifPickup[kecamatan];if(!dataLok||!tp)return;if(jenis==='paket'){kendaraanAktif='pickup';const perKarungPkt={nusaniwe:10000,sirimau:12000,'teluk ambon':15000,baguala:15000,'leitimur selatan':13000};const tarifPkt=perKarungPkt[kecamatan]||10000;ongkirAktif=tp.biayaPickup+(jumlah*tarifPkt);labelEl.textContent='🚛 Mobil Pickup';infoEl.className='info-kendaraan pickup show';infoEl.innerHTML=`🚛 <strong>Kendaraan: Mobil Pickup</strong><br><em>Paket Karung selalu diantar dengan pickup</em><br>Jumlah: <strong>${jumlah} karung</strong> (= ${jumlah*100} buah kelapa)<br>Biaya sewa pickup: Rp ${tp.biayaPickup.toLocaleString('id-ID')}<br>Jarak estimasi: ±${dataLok.jarak} km dari Latuhalat`;document.getElementById('ongkir').textContent='Rp '+ongkirAktif.toLocaleString('id-ID');hitungTotal();return;}if(jumlah<=batasMotor){kendaraanAktif='motor';ongkirAktif=dataLok.tarifMotor;labelEl.textContent='🏍️ Motor';infoEl.className='info-kendaraan motor show';infoEl.innerHTML=`🏍️ <strong>Kendaraan: Motor</strong><br>Jumlah: <strong>${jumlah} ${satuan}</strong> (maks ${batasMotor} ${satuan} untuk motor)<br>Jarak estimasi: ±${dataLok.jarak} km dari Latuhalat`;}else{kendaraanAktif='pickup';const biayaPerSatuan=jenis==='kelapa'?tp.perButir:tp.perKarung;ongkirAktif=tp.biayaPickup+(jumlah*biayaPerSatuan);labelEl.textContent='🚛 Mobil Pickup';infoEl.className='info-kendaraan pickup show';infoEl.innerHTML=`🚛 <strong>Kendaraan: Mobil Pickup</strong><br>Jumlah: <strong>${jumlah} ${satuan}</strong> — melebihi batas motor (${batasMotor} ${satuan})<br>Biaya sewa pickup: Rp ${tp.biayaPickup.toLocaleString('id-ID')}<br>Jarak estimasi: ±${dataLok.jarak} km dari Latuhalat`;}document.getElementById('ongkir').textContent='Rp '+ongkirAktif.toLocaleString('id-ID');hitungTotal();}
+function hitungTotal(){const hargaBarang=produkAktif.harga*produkAktif.qty;document.getElementById('hargaBarang').textContent='Rp '+hargaBarang.toLocaleString('id-ID');document.getElementById('totalBayar').textContent='Rp '+(hargaBarang+ongkirAktif).toLocaleString('id-ID');}
+function ambilLokasi(){if(!navigator.geolocation)return alert('Browser tidak mendukung geolokasi.');navigator.geolocation.getCurrentPosition(pos=>{document.getElementById('alamatDetail').value=`Lat: ${pos.coords.latitude.toFixed(5)}, Lon: ${pos.coords.longitude.toFixed(5)}`;},()=>alert('Gagal mengambil lokasi.'));}
+function lanjutKePembayaran(){const nama=document.getElementById('namaPembeli').value.trim();const hp=document.getElementById('hpPembeli').value.trim();const kec=document.getElementById('kecamatan').value;const kel=document.getElementById('kelurahan').value;const alamat=document.getElementById('alamatDetail').value.trim();const jumlah=parseInt(document.getElementById('jumlahProduk').value)||0;if(!nama||!hp||!kec||!kel||!alamat)return alert('Lengkapi semua data terlebih dahulu!');if(jumlah<=0)return alert('Masukkan jumlah produk yang dipesan!');if(ongkirAktif===0&&kec!=='')return alert('Pilih kelurahan tujuan agar ongkir bisa dihitung!');const hargaBarang=produkAktif.harga*produkAktif.qty;const total=hargaBarang+ongkirAktif;const labelOngkir=kendaraanAktif==='pickup'?'Ongkir (Mobil Pickup)':'Ongkir (Motor)';document.getElementById('pmItemName').textContent=produkAktif.nama+(produkAktif.qty>1?` x${produkAktif.qty}`:'');document.getElementById('pmItemPrice').textContent='Rp '+hargaBarang.toLocaleString('id-ID');document.getElementById('pmLabelOngkir').textContent=labelOngkir;document.getElementById('pmOngkir').textContent='Rp '+ongkirAktif.toLocaleString('id-ID');document.getElementById('pmTotal').textContent='Rp '+total.toLocaleString('id-ID');tutupLogin();resetPembayaran();document.getElementById('popupPembayaran').classList.add('aktif');}
+function pilihMetode(tipe,sub,el){document.querySelectorAll('#popupPembayaran .pm-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');metodeTerpilih=tipe;ewalletTerpilih=(tipe==='ewallet')?sub:null;bankTerpilih=null;document.querySelectorAll('.pm-detail').forEach(d=>d.classList.remove('open'));document.getElementById('suksesBox').classList.remove('open');const labelMap={ewallet:sub.charAt(0).toUpperCase()+sub.slice(1),qris:'QRIS',transfer:'Transfer Bank',cod:'COD'};if(tipe==='transfer'){document.getElementById('detail-transfer').classList.add('open');document.getElementById('btnBayar').disabled=true;document.getElementById('btnBayar').textContent='Pilih Bank Tujuan';}else if(tipe==='qris'){document.getElementById('detail-qris').classList.add('open');document.getElementById('btnBayar').disabled=false;document.getElementById('btnBayar').textContent='Pesan dengan QRIS';}else{document.getElementById('btnBayar').disabled=false;document.getElementById('btnBayar').textContent=`Pesan — Bayar via ${labelMap[tipe]}`;}}
+function pilihBank(el,nama,norek){document.querySelectorAll('#detail-transfer .sub-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');bankTerpilih={nama,norek};document.getElementById('btnBayar').disabled=false;document.getElementById('btnBayar').textContent=`Pesan — Transfer ke ${nama}`;}
+async function prosesPesanan(){if(!metodeTerpilih)return;if(metodeTerpilih==='transfer'&&!bankTerpilih){alert('Pilih bank tujuan transfer terlebih dahulu.');return;}const nama=document.getElementById('namaPembeli').value.trim();const hp=document.getElementById('hpPembeli').value.trim();const kec=document.getElementById('kecamatan').value;const kel=document.getElementById('kelurahan').value;const alamat=document.getElementById('alamatDetail').value.trim();const harga=produkAktif.harga*produkAktif.qty;const total=harga+ongkirAktif;const btn=document.getElementById('btnBayar');const origText=btn.textContent;btn.disabled=true;btn.innerHTML='Menyimpan Pesanan... <span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-left:6px"></span>';const payload={nama,hp,kecamatan:kec,kelurahan:kel,alamat,nama_produk:produkAktif.nama,jenis_produk:produkAktif.jenis,total_qty:produkAktif.qty,kendaraan:kendaraanAktif,harga_barang:harga,ongkir:ongkirAktif,total_bayar:total,metode_pembayaran:metodeTerpilih,bank:bankTerpilih?bankTerpilih.nama:'',ewallet:ewalletTerpilih||''};try{const res=await fetch(API_PESAN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await res.json();btn.disabled=false;btn.textContent=origText;if(!data.sukses){alert('Gagal menyimpan pesanan: '+(data.pesan||'Coba lagi.'));return;}const idPesanan=data.id_pesanan;document.getElementById('skIdNum').textContent='#'+idPesanan;document.getElementById('skIdHp').textContent='HP: '+hp;document.getElementById('trackBtn').href=`${API_STATUS}?id=${idPesanan}&hp=${encodeURIComponent(hp)}`;document.querySelectorAll('#popupPembayaran .pm-section-title,#popupPembayaran .pm-option,#popupPembayaran .pm-detail,#popupPembayaran .pm-summary').forEach(el=>el.style.display='none');document.getElementById('btnBayar').style.display='none';document.querySelector('.pm-btn-cancel').style.display='none';document.getElementById('suksesBox').classList.add('open');document.getElementById('suksesBox').scrollIntoView({behavior:'smooth',block:'start'});keranjang=[];updateJumlahKeranjang();}catch(err){btn.disabled=false;btn.textContent=origText;alert('Gagal menghubungi server.');}}
+function selesaiBelanja(){tutupPembayaran();}
+function tutupPembayaran(){document.getElementById('popupPembayaran').classList.remove('aktif');resetPembayaran();}
+function resetPembayaran(){metodeTerpilih=null;ewalletTerpilih=null;bankTerpilih=null;document.querySelectorAll('#popupPembayaran .pm-option').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('.pm-detail').forEach(d=>d.classList.remove('open'));document.getElementById('suksesBox').classList.remove('open');document.querySelectorAll('#popupPembayaran .pm-section-title,#popupPembayaran .pm-option,#popupPembayaran .pm-summary').forEach(el=>el.style.display='');document.getElementById('btnBayar').style.display='';document.getElementById('btnBayar').disabled=true;document.getElementById('btnBayar').textContent='Pilih Metode Pembayaran';document.querySelector('.pm-btn-cancel').style.display='';}
+document.querySelectorAll('.popup').forEach(popup=>{popup.addEventListener('click',function(e){if(e.target===this){this.classList.remove('aktif');if(this.id==='popupPembayaran')resetPembayaran();}});});
+</script>
+</body>
+</html>

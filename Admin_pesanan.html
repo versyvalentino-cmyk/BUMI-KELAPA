@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Bumi Kelapa</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Segoe UI',sans-serif; background:#f3f4f6; color:#111; }
+
+header {
+  background:#0F6E56; color:#fff;
+  padding:14px 24px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  flex-wrap:wrap;
+}
+header h1 { font-size:17px; font-weight:700; }
+.header-right { display:flex; align-items:center; gap:12px; }
+.chat-notif-badge {
+  background:#EF4444; color:#fff;
+  font-size:11px; font-weight:700;
+  padding:2px 8px; border-radius:20px;
+  display:none;
+}
+.chat-notif-badge.show { display:inline-block; }
+.tab-btn {
+  padding:7px 16px; border-radius:8px; border:none;
+  font-size:13px; font-weight:600; cursor:pointer;
+  transition:background .15s;
+}
+.tab-btn.aktif { background:#fff; color:#0F6E56; }
+.tab-btn:not(.aktif) { background:rgba(255,255,255,.18); color:#fff; }
+.tab-btn:not(.aktif):hover { background:rgba(255,255,255,.28); }
+
+/* Layout utama: sidebar chat + konten */
+.layout { display:flex; height:calc(100vh - 58px); overflow:hidden; }
+
+/* ============================================================
+   PANEL CHAT (sidebar kiri)
+   ============================================================ */
+.chat-sidebar {
+  width:300px; flex-shrink:0;
+  background:#fff;
+  border-right:1px solid #e5e7eb;
+  display:flex; flex-direction:column;
+}
+.chat-sidebar.hidden { display:none; }
+
+.cs-header {
+  padding:14px 16px;
+  border-bottom:1px solid #f3f4f6;
+  font-weight:700; font-size:14px; color:#0F6E56;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.cs-refresh {
+  font-size:18px; cursor:pointer; opacity:.6;
+  transition:opacity .15s; border:none; background:none;
+  color:#0F6E56;
+}
+.cs-refresh:hover { opacity:1; }
+
+.cs-list {
+  flex:1; overflow-y:auto;
+}
+.cs-list::-webkit-scrollbar { width:4px; }
+.cs-list::-webkit-scrollbar-thumb { background:#e5e7eb; border-radius:4px; }
+
+.sesi-item {
+  padding:12px 14px;
+  border-bottom:1px solid #f9fafb;
+  cursor:pointer;
+  transition:background .1s;
+  position:relative;
+}
+.sesi-item:hover { background:#f9fafb; }
+.sesi-item.aktif { background:#f0fdf6; border-left:3px solid #1D9E75; }
+.sesi-item.eskalasi { background:#fffbeb; border-left:3px solid #F59E0B; }
+
+.sesi-nama { font-size:13px; font-weight:600; color:#111; margin-bottom:2px; }
+.sesi-preview { font-size:11px; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; }
+.sesi-meta { display:flex; align-items:center; gap:6px; margin-top:4px; }
+.sesi-waktu { font-size:10px; color:#bbb; }
+.sesi-mode {
+  font-size:9px; font-weight:700;
+  padding:1px 6px; border-radius:10px;
+}
+.mode-bot      { background:#dbeafe; color:#1e40af; }
+.mode-eskalasi { background:#fef3c7; color:#92400e; }
+.mode-admin    { background:#d1fae5; color:#065f46; }
+.sesi-unread {
+  position:absolute; top:12px; right:12px;
+  background:#EF4444; color:#fff;
+  font-size:10px; font-weight:700;
+  width:18px; height:18px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.cs-empty { text-align:center; padding:40px 20px; color:#bbb; font-size:13px; }
+
+/* ============================================================
+   PANEL CHAT AKTIF (kanan dari sidebar)
+   ============================================================ */
+.chat-panel {
+  width:320px; flex-shrink:0;
+  background:#fff;
+  border-right:1px solid #e5e7eb;
+  display:none; flex-direction:column;
+}
+.chat-panel.show { display:flex; }
+
+.cp-head {
+  background:linear-gradient(135deg,#0F6E56,#1D9E75);
+  color:#fff; padding:12px 14px;
+  display:flex; align-items:center; gap:10px;
+  flex-shrink:0;
+}
+.cp-avatar {
+  width:34px; height:34px; border-radius:50%;
+  background:rgba(255,255,255,.2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0;
+}
+.cp-info { flex:1; min-width:0; }
+.cp-name { font-size:13px; font-weight:700; }
+.cp-sub { font-size:11px; opacity:.8; margin-top:1px; }
+.cp-close {
+  width:26px; height:26px; border-radius:50%;
+  background:rgba(255,255,255,.15); border:none; color:#fff;
+  font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.cp-close:hover { background:rgba(255,255,255,.28); }
+
+.cp-messages {
+  flex:1; overflow-y:auto;
+  padding:12px 10px;
+  display:flex; flex-direction:column; gap:6px;
+  background:#fafafa;
+  scroll-behavior:smooth;
+}
+.cp-messages::-webkit-scrollbar { width:4px; }
+.cp-messages::-webkit-scrollbar-thumb { background:#e5e7eb; border-radius:4px; }
+
+.cm-row { display:flex; align-items:flex-end; gap:5px; }
+.cm-row.from-me { flex-direction:row-reverse; }
+.cm-ava {
+  width:24px; height:24px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; flex-shrink:0;
+}
+.from-bot   .cm-ava { background:#dbeafe; }
+.from-user  .cm-ava { background:#f3f4f6; }
+.cm-inner { display:flex; flex-direction:column; }
+.cm-label { font-size:9px; color:#bbb; margin-bottom:1px; padding-left:2px; }
+.from-me .cm-label { display:none; }
+.cm-bubble {
+  max-width:200px; padding:7px 10px;
+  border-radius:14px; font-size:12px; line-height:1.5;
+  word-break:break-word;
+}
+.from-user .cm-bubble { background:#f3f4f6; color:#111; border-bottom-left-radius:3px; }
+.from-bot  .cm-bubble { background:#e0f2fe; color:#0c4a6e; border-bottom-left-radius:3px; }
+.from-me   .cm-bubble { background:#1D9E75; color:#fff; border-bottom-right-radius:3px; }
+.cm-time { font-size:9px; color:#bbb; margin-top:2px; padding:0 2px; }
+.from-me .cm-time { text-align:right; }
+.cm-sistem { text-align:center; font-size:10px; color:#aaa; padding:3px 0; }
+.cm-sistem.eskalasi {
+  background:#fffbeb; border:1px solid #fde68a;
+  border-radius:8px; padding:5px 10px;
+  color:#92400e; font-size:11px;
+}
+
+.cp-input-area {
+  padding:10px; border-top:1px solid #f3f4f6;
+  background:#fff; flex-shrink:0;
+  display:flex; gap:6px; align-items:flex-end;
+}
+.cp-textarea {
+  flex:1; padding:8px 11px;
+  border:1.5px solid #e5e7eb; border-radius:16px;
+  font-size:12px; outline:none; resize:none;
+  font-family:inherit; line-height:1.4;
+  max-height:80px;
+}
+.cp-textarea:focus { border-color:#1D9E75; }
+.cp-send {
+  width:34px; height:34px;
+  background:#1D9E75; border:none; border-radius:50%;
+  color:#fff; font-size:14px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:background .15s;
+}
+.cp-send:hover { background:#0F6E56; }
+.cp-send:disabled { background:#e5e7eb; cursor:not-allowed; }
+
+/* ============================================================
+   KONTEN PESANAN (kanan)
+   ============================================================ */
+.main-content {
+  flex:1; overflow-y:auto; padding:20px;
+}
+
+.stats { display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
+.stat-card {
+  background:#fff; border-radius:12px;
+  padding:14px 18px; flex:1; min-width:120px;
+  box-shadow:0 1px 6px rgba(0,0,0,.06);
+  border-left:4px solid #ccc;
+}
+.stat-card.orange { border-color:#F59E0B; }
+.stat-card.blue   { border-color:#3B82F6; }
+.stat-card.purple { border-color:#8B5CF6; }
+.stat-card.green  { border-color:#10B981; }
+.stat-card.red    { border-color:#EF4444; }
+.stat-num   { font-size:26px; font-weight:800; color:#111; }
+.stat-label { font-size:11px; color:#888; margin-top:2px; }
+
+.table-card {
+  background:#fff; border-radius:14px;
+  box-shadow:0 1px 8px rgba(0,0,0,.07); overflow:hidden;
+}
+.table-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 18px; border-bottom:1px solid #f3f4f6; flex-wrap:wrap; gap:8px;
+}
+.table-header h2 { font-size:15px; font-weight:700; }
+.filter-wrap { display:flex; gap:8px; flex-wrap:wrap; }
+.filter-wrap select,.filter-wrap input {
+  padding:7px 11px; border:1.5px solid #e5e7eb;
+  border-radius:8px; font-size:12px; outline:none;
+}
+.filter-wrap select:focus,.filter-wrap input:focus { border-color:#1D9E75; }
+
+table { width:100%; border-collapse:collapse; font-size:12px; }
+thead { background:#f9fafb; }
+th { padding:10px 12px; text-align:left; font-weight:600; color:#555; font-size:11px; text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid #f3f4f6; }
+td { padding:11px 12px; border-bottom:1px solid #f9fafb; vertical-align:middle; color:#333; }
+tr:hover td { background:#fafffe; }
+tr:last-child td { border-bottom:none; }
+
+.badge { display:inline-block; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge-orange { background:#fef3c7; color:#92400e; }
+.badge-blue   { background:#dbeafe; color:#1e40af; }
+.badge-purple { background:#ede9fe; color:#5b21b6; }
+.badge-green  { background:#d1fae5; color:#065f46; }
+.badge-red    { background:#fee2e2; color:#991b1b; }
+
+.status-select { padding:5px 9px; border:1.5px solid #e5e7eb; border-radius:7px; font-size:12px; cursor:pointer; outline:none; background:#fff; }
+.btn-update { padding:5px 12px; border-radius:7px; border:none; background:#1D9E75; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; margin-top:5px; }
+.btn-update:hover { background:#15795a; }
+.btn-update:disabled { background:#d1d5db; cursor:not-allowed; }
+.btn-refresh { padding:7px 14px; border-radius:8px; border:1.5px solid #1D9E75; background:#fff; color:#1D9E75; font-size:12px; font-weight:600; cursor:pointer; }
+.btn-refresh:hover { background:#f0fdf6; }
+
+.empty-state { text-align:center; padding:40px 20px; color:#888; }
+.empty-state .ei { font-size:36px; margin-bottom:8px; }
+
+.toast { position:fixed; bottom:24px; right:24px; background:#0F6E56; color:#fff; padding:11px 18px; border-radius:10px; font-size:13px; font-weight:500; box-shadow:0 4px 16px rgba(0,0,0,.15); z-index:9999; transform:translateY(80px); opacity:0; transition:all .3s; }
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.error { background:#EF4444; }
+
+.loading { text-align:center; padding:36px; color:#888; font-size:13px; }
+.spinner { display:inline-block; width:18px; height:18px; border:3px solid #e5e7eb; border-top-color:#1D9E75; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:7px; }
+@keyframes spin { to{transform:rotate(360deg);} }
+
+@media(max-width:900px) {
+  .chat-sidebar { width:260px; }
+  .chat-panel { width:280px; }
+}
+@media(max-width:700px) {
+  .layout { flex-direction:column; height:auto; }
+  .chat-sidebar,.chat-panel { width:100%; border-right:none; border-bottom:1px solid #e5e7eb; }
+  .chat-sidebar { max-height:240px; }
+  .chat-panel { height:300px; }
+  .main-content { padding:12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1> BUMI KELAPA — Admin Panel</h1>
+  <div class="header-right">
+    <span id="chatNotifHeader" class="chat-notif-badge">💬 <span id="chatNotifCount">0</span> pesan baru</span>
+    <button class="tab-btn aktif" id="tabPesananBtn" onclick="switchTab('pesanan')">📦 Pesanan</button>
+    <button class="tab-btn" id="tabChatBtn" onclick="switchTab('chat')">💬 Chat</button>
+    <span id="lastRefresh" style="font-size:12px;opacity:.7;"></span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ★ SIDEBAR DAFTAR SESI CHAT ★ -->
+  <div class="chat-sidebar hidden" id="chatSidebar">
+    <div class="cs-header">
+      <span>💬 Sesi Chat</span>
+      <button class="cs-refresh" onclick="muatDaftarSesi()" title="Refresh">↻</button>
+    </div>
+    <div class="cs-list" id="csDaftarSesi">
+      <div class="cs-empty">Memuat sesi...</div>
+    </div>
+  </div>
+
+  <!-- ★ PANEL CHAT AKTIF ★ -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="cp-head">
+      <div class="cp-avatar" id="cpAvatar">👤</div>
+      <div class="cp-info">
+        <div class="cp-name" id="cpNama">Pilih sesi</div>
+        <div class="cp-sub" id="cpSub">-</div>
+      </div>
+      <button class="cp-close" onclick="tutupChatPanel()">✕</button>
+    </div>
+    <div class="cp-messages" id="cpMessages">
+      <div class="cm-sistem">Pilih sesi di sebelah kiri untuk mulai membalas.</div>
+    </div>
+    <div class="cp-input-area">
+      <textarea class="cp-textarea" id="cpInput" placeholder="Ketik balasan admin..." rows="1"
+        onkeydown="handleAdminChatKey(event)" oninput="autoResizeAdmin(this)"></textarea>
+      <button class="cp-send" id="cpSendBtn" onclick="kirimBalasanAdmin()" title="Kirim">➤</button>
+    </div>
+  </div>
+
+  <!-- ★ KONTEN PESANAN ★ -->
+  <div class="main-content" id="mainContent">
+
+    <div class="stats" id="statsContainer">
+      <div class="stat-card orange"><div class="stat-num" id="statMenunggu">-</div><div class="stat-label">Menunggu Konfirmasi</div></div>
+      <div class="stat-card blue">  <div class="stat-num" id="statDiproses">-</div><div class="stat-label">Sedang Diproses</div></div>
+      <div class="stat-card purple"><div class="stat-num" id="statDikirim">-</div><div class="stat-label">Sedang Dikirim</div></div>
+      <div class="stat-card green"> <div class="stat-num" id="statTiba">-</div>  <div class="stat-label">Telah Tiba</div></div>
+      <div class="stat-card red">   <div class="stat-num" id="statBatal">-</div>  <div class="stat-label">Dibatalkan</div></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <h2>Daftar Pesanan</h2>
+        <div class="filter-wrap">
+          <input type="text" id="searchInput" placeholder="🔍 Cari nama/HP..." oninput="filterTabel()">
+          <select id="filterStatus" onchange="filterTabel()">
+            <option value="">Semua Status</option>
+            <option value="menunggu_konfirmasi">Menunggu</option>
+            <option value="diproses">Diproses</option>
+            <option value="dikirim">Dikirim</option>
+            <option value="tiba">Tiba</option>
+            <option value="dibatalkan">Dibatalkan</option>
+          </select>
+          <button class="btn-refresh" onclick="muatData()">↻ Refresh</button>
+        </div>
+      </div>
+      <div id="tableContainer">
+        <div class="loading"><span class="spinner"></span>Memuat data...</div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+</div><!-- /layout -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const API_ADMIN = 'admin_api.php';
+const API_CHAT  = 'chat.php';
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+let tabAktif = 'pesanan';
+
+function switchTab(tab) {
+  tabAktif = tab;
+  document.getElementById('tabPesananBtn').className = 'tab-btn' + (tab==='pesanan'?' aktif':'');
+  document.getElementById('tabChatBtn').className    = 'tab-btn' + (tab==='chat'?' aktif':'');
+  document.getElementById('chatSidebar').classList.toggle('hidden', tab !== 'chat');
+  if (tab === 'chat') {
+    muatDaftarSesi();
+    startPollingChat();
+  } else {
+    stopPollingChat();
+  }
+}
+
+// ============================================================
+// ★★★ SISTEM CHAT ADMIN ★★★
+// ============================================================
+let sesiAktif        = null; // session_id yang sedang dibuka
+let chatIdTerakhir   = 0;
+let chatPollingTimer = null;
+let daftarSesi       = [];
+
+// ---- Muat daftar semua sesi ----
+async function muatDaftarSesi() {
+  try {
+    const res  = await fetch(`${API_CHAT}?aksi=daftar_sesi`);
+    const data = await res.json();
+    if (!data.sukses) return;
+    daftarSesi = data.sesi || [];
+    renderDaftarSesi(daftarSesi);
+    updateChatNotif(daftarSesi);
+  } catch(e) {}
+}
+
+function renderDaftarSesi(sesi) {
+  const el = document.getElementById('csDaftarSesi');
+  if (!sesi.length) {
+    el.innerHTML = '<div class="cs-empty">Belum ada sesi chat.</div>';
+    return;
+  }
+  el.innerHTML = sesi.map(s => {
+    const modeClass = s.mode === 'eskalasi' ? 'mode-eskalasi' : (s.mode === 'admin' ? 'mode-admin' : 'mode-bot');
+    const modeLabel = s.mode === 'eskalasi' ? '⚡ Perlu Dibalas' : (s.mode === 'admin' ? '✅ Admin' : '🤖 Bot');
+    const preview   = s.pesan_terakhir ? escHtml(s.pesan_terakhir).slice(0,50) + (s.pesan_terakhir.length>50?'...':'') : '-';
+    const unread    = parseInt(s.belum_baca) > 0 ? `<div class="sesi-unread">${s.belum_baca}</div>` : '';
+    const isAktif   = s.session_id === sesiAktif;
+    const rowClass  = isAktif ? 'aktif' : (s.mode === 'eskalasi' ? 'eskalasi' : '');
+    return `
+      <div class="sesi-item ${rowClass}" onclick="bukaSesi('${escHtml(s.session_id)}','${escHtml(s.nama_pembeli)}','${escHtml(s.hp_pembeli)}','${s.mode}')">
+        <div class="sesi-nama">${escHtml(s.nama_pembeli)}</div>
+        <div class="sesi-preview">${preview}</div>
+        <div class="sesi-meta">
+          <span class="sesi-waktu">${s.waktu_terakhir || ''}</span>
+          <span class="sesi-mode ${modeClass}">${modeLabel}</span>
+        </div>
+        ${unread}
+      </div>
+    `;
+  }).join('');
+}
+
+function updateChatNotif(sesi) {
+  const totalUnread = sesi.reduce((a,s) => a + parseInt(s.belum_baca||0), 0);
+  const badge = document.getElementById('chatNotifHeader');
+  const count = document.getElementById('chatNotifCount');
+  if (totalUnread > 0) {
+    count.textContent = totalUnread;
+    badge.classList.add('show');
+    // Update tab button
+    document.getElementById('tabChatBtn').textContent = `💬 Chat (${totalUnread})`;
+  } else {
+    badge.classList.remove('show');
+    document.getElementById('tabChatBtn').textContent = '💬 Chat';
+  }
+}
+
+// ---- Buka sesi chat tertentu ----
+async function bukaSesi(sid, nama, hp, mode) {
+  sesiAktif      = sid;
+  chatIdTerakhir = 0;
+
+  // Update UI header panel
+  document.getElementById('cpNama').textContent = nama || 'Tamu';
+  document.getElementById('cpSub').textContent  = hp || 'HP tidak tersedia';
+  document.getElementById('cpAvatar').textContent = mode === 'bot' ? '🤖' : (mode === 'eskalasi' ? '⚡' : '👤');
+  document.getElementById('cpMessages').innerHTML = '<div class="cm-sistem">Memuat percakapan...</div>';
+  document.getElementById('chatPanel').classList.add('show');
+
+  // Tandai sudah dibaca
+  fetch(API_CHAT, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({aksi:'tandai_baca', session_id:sid})
+  }).catch(()=>{});
+
+  // Render ulang daftar sesi agar item yang aktif highlight
+  renderDaftarSesi(daftarSesi);
+
+  // Muat pesan
+  await muatPesanAdmin();
+  startPollingChatPanel();
+}
+
+function tutupChatPanel() {
+  sesiAktif = null;
+  chatIdTerakhir = 0;
+  document.getElementById('chatPanel').classList.remove('show');
+  stopPollingChatPanel();
+}
+
+// ---- Muat pesan dalam sesi aktif ----
+async function muatPesanAdmin() {
+  if (!sesiAktif) return;
+  try {
+    const res  = await fetch(`${API_CHAT}?aksi=ambil&session_id=${encodeURIComponent(sesiAktif)}&sejak_id=${chatIdTerakhir}`);
+    const data = await res.json();
+    if (!data.sukses) return;
+
+    const container = document.getElementById('cpMessages');
+
+    // Jika pertama kali load, kosongkan
+    if (chatIdTerakhir === 0) container.innerHTML = '';
+
+    let adaBaru = false;
+    data.pesan.forEach(p => {
+      if (document.querySelector(`[data-cm-id="${p.id}"]`)) return;
+      appendCpBubble(p.pengirim, p.pesan, p.waktu, p.id);
+      if (parseInt(p.id) > chatIdTerakhir) chatIdTerakhir = parseInt(p.id);
+      adaBaru = true;
+    });
+
+    if (adaBaru || chatIdTerakhir === 0) {
+      container.scrollTop = container.scrollHeight;
+    }
+
+    if (!data.pesan.length && chatIdTerakhir === 0) {
+      container.innerHTML = '<div class="cm-sistem">Belum ada pesan.</div>';
+    }
+  } catch(e) {}
+}
+
+function appendCpBubble(pengirim, pesan, waktu, id) {
+  const container = document.getElementById('cpMessages');
+  const isAdmin   = pengirim === 'admin';
+  const isBot     = pengirim === 'bot';
+  const rowClass  = isAdmin ? 'from-me' : (isBot ? 'from-bot' : 'from-user');
+  const ikon      = isBot ? '🤖' : '👤';
+  const label     = isBot ? 'Koko (Bot)' : (isAdmin ? '' : 'Pembeli');
+
+  const div = document.createElement('div');
+  div.className     = `cm-row ${rowClass}`;
+  div.dataset.cmId  = id;
+  div.innerHTML = `
+    ${!isAdmin ? `<div class="cm-ava">${ikon}</div>` : ''}
+    <div class="cm-inner">
+      ${!isAdmin ? `<div class="cm-label">${label}</div>` : ''}
+      <div class="cm-bubble">${escHtml(pesan)}</div>
+      <div class="cm-time">${waktu}</div>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+// ---- Admin kirim balasan ----
+async function kirimBalasanAdmin() {
+  if (!sesiAktif) return;
+  const input = document.getElementById('cpInput');
+  const teks  = input.value.trim();
+  if (!teks) return;
+
+  input.value = '';
+  input.style.height = '';
+  document.getElementById('cpSendBtn').disabled = true;
+
+  // Tampilkan optimistic
+  const wkt = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  appendCpBubble('admin', teks, wkt, 'tmp-' + Date.now());
+  document.getElementById('cpMessages').scrollTop = document.getElementById('cpMessages').scrollHeight;
+
+  try {
+    const res  = await fetch(API_CHAT, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({aksi:'balas_admin', session_id:sesiAktif, pesan:teks})
+    });
+    const data = await res.json();
+    if (data.sukses && data.id > chatIdTerakhir) chatIdTerakhir = data.id;
+    // Refresh daftar sesi
+    muatDaftarSesi();
+  } catch(e) {}
+
+  document.getElementById('cpSendBtn').disabled = false;
+  document.getElementById('cpInput').focus();
+}
+
+function handleAdminChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); kirimBalasanAdmin(); }
+}
+function autoResizeAdmin(el) {
+  el.style.height = '';
+  el.style.height = Math.min(el.scrollHeight, 80) + 'px';
+}
+
+// ---- Polling ----
+let chatPanelTimer = null;
+function startPollingChat() {
+  stopPollingChat();
+  muatDaftarSesi();
+  chatPollingTimer = setInterval(() => { muatDaftarSesi(); }, 8000);
+}
+function stopPollingChat() {
+  if (chatPollingTimer) { clearInterval(chatPollingTimer); chatPollingTimer = null; }
+}
+function startPollingChatPanel() {
+  stopPollingChatPanel();
+  chatPanelTimer = setInterval(() => muatPesanAdmin(), 3000);
+}
+function stopPollingChatPanel() {
+  if (chatPanelTimer) { clearInterval(chatPanelTimer); chatPanelTimer = null; }
+}
+
+// ============================================================
+// ★★★ SISTEM PESANAN ★★★
+// ============================================================
+let semuaPesanan = [];
+
+const statusInfo = {
+  menunggu_konfirmasi: { label:'Menunggu Konfirmasi', cls:'badge-orange' },
+  diproses:            { label:'Sedang Diproses',     cls:'badge-blue'   },
+  dikirim:             { label:'Dalam Perjalanan',    cls:'badge-purple' },
+  tiba:                { label:'Telah Tiba',          cls:'badge-green'  },
+  dibatalkan:          { label:'Dibatalkan',          cls:'badge-red'    }
+};
+
+async function muatData() {
+  document.getElementById('tableContainer').innerHTML = '<div class="loading"><span class="spinner"></span>Memuat data...</div>';
+  try {
+    const res  = await fetch(API_ADMIN + '?aksi=list');
+    const data = await res.json();
+    if (!data.sukses) throw new Error(data.pesan||'Error');
+    semuaPesanan = data.pesanan || [];
+    hitungStats();
+    renderTabel(semuaPesanan);
+    document.getElementById('lastRefresh').textContent = 'Update: ' + new Date().toLocaleTimeString('id-ID');
+  } catch(err) {
+    document.getElementById('tableContainer').innerHTML = `<div class="empty-state"><div class="ei">⚠️</div><p>Gagal memuat: ${err.message}</p></div>`;
+  }
+}
+
+function hitungStats() {
+  const c = {menunggu_konfirmasi:0,diproses:0,dikirim:0,tiba:0,dibatalkan:0};
+  semuaPesanan.forEach(p => { if(c[p.status]!==undefined) c[p.status]++; });
+  document.getElementById('statMenunggu').textContent = c.menunggu_konfirmasi;
+  document.getElementById('statDiproses').textContent = c.diproses;
+  document.getElementById('statDikirim').textContent  = c.dikirim;
+  document.getElementById('statTiba').textContent     = c.tiba;
+  document.getElementById('statBatal').textContent    = c.dibatalkan;
+}
+
+function filterTabel() {
+  const kata   = document.getElementById('searchInput').value.toLowerCase();
+  const status = document.getElementById('filterStatus').value;
+  const filtered = semuaPesanan.filter(p => {
+    const cocokKata   = !kata   || p.nama.toLowerCase().includes(kata) || p.hp.includes(kata) || String(p.id).includes(kata);
+    const cocokStatus = !status || p.status === status;
+    return cocokKata && cocokStatus;
+  });
+  renderTabel(filtered);
+}
+
+function renderTabel(data) {
+  if (!data.length) {
+    document.getElementById('tableContainer').innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>Tidak ada pesanan.</p></div>';
+    return;
+  }
+  const rows = data.map(p => {
+    const si  = statusInfo[p.status] || statusInfo.menunggu_konfirmasi;
+    const tgl = new Date(p.tanggal).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `
+      <tr>
+        <td><b>#${p.id}</b></td>
+        <td>${escHtml(p.nama)}<br><small style="color:#888">${escHtml(p.hp)}</small></td>
+        <td>${escHtml(p.nama_produk||'-')}<br><small style="color:#888">x${p.total_qty}</small></td>
+        <td>${escHtml(p.kecamatan)}, ${escHtml(p.kelurahan)}<br><small style="color:#888">${escHtml(p.alamat)}</small></td>
+        <td>${escHtml(p.metode_pembayaran)}${p.bank?'<br><small style="color:#888">'+escHtml(p.bank)+'</small>':''}${p.ewallet?'<br><small style="color:#888">'+escHtml(p.ewallet)+'</small>':''}</td>
+        <td><b>Rp ${parseInt(p.total_bayar).toLocaleString('id-ID')}</b></td>
+        <td><span class="badge ${si.cls}">${si.label}</span></td>
+        <td><small style="color:#888">${tgl}</small></td>
+        <td>
+          <select class="status-select" id="sel-${p.id}">
+            <option value="menunggu_konfirmasi" ${p.status==='menunggu_konfirmasi'?'selected':''}>Menunggu</option>
+            <option value="diproses"            ${p.status==='diproses'?'selected':''}>Diproses</option>
+            <option value="dikirim"             ${p.status==='dikirim'?'selected':''}>Dikirim</option>
+            <option value="tiba"                ${p.status==='tiba'?'selected':''}>Tiba</option>
+            <option value="dibatalkan"          ${p.status==='dibatalkan'?'selected':''}>Batalkan</option>
+          </select><br>
+          <button class="btn-update" style="margin-top:5px" onclick="updateStatus(${p.id})" id="btn-${p.id}">Simpan</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('tableContainer').innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Pembeli</th><th>Produk</th><th>Alamat</th>
+          <th>Pembayaran</th><th>Total</th><th>Status</th><th>Tanggal</th><th>Update</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+async function updateStatus(id) {
+  const sel = document.getElementById(`sel-${id}`);
+  const btn = document.getElementById(`btn-${id}`);
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const res  = await fetch(API_ADMIN, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({aksi:'update_status', id, status:sel.value})
+    });
+    const data = await res.json();
+    if (!data.sukses) throw new Error(data.pesan);
+    tampilToast('✅ Status #' + id + ' berhasil diperbarui!');
+    muatData();
+  } catch(err) {
+    btn.disabled=false; btn.textContent='Simpan';
+    tampilToast('❌ Gagal: '+err.message, true);
+  }
+}
+
+function tampilToast(msg, error=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (error?' error':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+function escHtml(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+muatData();
+setInterval(muatData, 30000);
+
+// Cek notif chat setiap 10 detik meski di tab pesanan
+setInterval(async () => {
+  try {
+    const res  = await fetch(`${API_CHAT}?aksi=daftar_sesi`);
+    const data = await res.json();
+    if (data.sukses) updateChatNotif(data.sesi || []);
+  } catch(e){}
+}, 10000);
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>360° Produk</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+<h1>Bumi Kelapa</h1>
+</header>
+
+<div class="viewer360" id="viewer">
+<img id="img360" src="images360/kelapa1.jpeg" draggable="false">
+</div>
+
+<!-- ⬇ INI TEMPAT SCRIPT -->
+<script>
+let current = 1;
+let total = 6;
+
+let img = document.getElementById("img360");
+let viewer = document.getElementById("viewer");
+
+let isDown = false;
+let startX = 0;
+
+viewer.addEventListener("mousedown", function(e){
+    isDown = true;
+    startX = e.clientX;
+});
+
+viewer.addEventListener("mouseup", function(){
+    isDown = false;
+});
+
+viewer.addEventListener("mouseleave", function(){
+    isDown = false;
+});
+
+viewer.addEventListener("mousemove", function(e){
+
+    if(!isDown) return;
+
+    let move = e.clientX - startX;
+
+    if(move > 6){
+        current--;
+        if(current < 1) current = total;
+        img.src = "images360/kelapa" + current + ".jpeg";
+        startX = e.clientX;
+    }
+
+    if(move < -6){
+        current++;
+        if(current > total) current = 1;
+        img.src = "images360/kelapa" + current + ".jpeg";
+        startX = e.clientX;
+    }
+
+});
+</script>
+
+</body>
+</html>
