@@ -7,11 +7,11 @@ header('Access-Control-Allow-Headers: Content-Type');
 // =============================================
 // KONFIGURASI DATABASE — sesuaikan di sini
 // =============================================
-$host   = 'localhost';
-$dbname = 'bumi_kelapa';
-$user   = 'root';
-$pass   = '';
-$port   = 3306;
+$host   = getenv('MYSQLHOST');
+$dbname = getenv('MYSQL_DATABASE');
+$user   = getenv('MYSQLUSER');
+$pass   = getenv('MYSQLPASSWORD');
+$port   = getenv('MYSQLPORT') ?: 3306;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['sukses' => false, 'pesan' => 'Method tidak diizinkan.']);
