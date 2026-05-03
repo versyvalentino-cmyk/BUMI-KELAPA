@@ -1,7 +1,13 @@
 <?php
 error_reporting(0);
 
-$conn = mysqli_connect("localhost", "root", "", "bumi_kelapa");
+$conn = mysqli_connect(
+    getenv('MYSQLHOST')     ?: 'mysql.railway.internal',
+    getenv('MYSQLUSER')     ?: 'root',
+    getenv('MYSQLPASSWORD') ?: 'UWfVrQgJWXzFZXbwxiaBDwbqrEozpAdV',
+    getenv('MYSQLDATABASE') ?: 'railway',
+    getenv('MYSQLPORT')     ?: '3306'
+);
 
 $data = json_decode(file_get_contents("php://input"), true);
 

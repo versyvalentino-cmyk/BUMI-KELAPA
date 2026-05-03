@@ -7,11 +7,11 @@ header('Access-Control-Allow-Headers: Content-Type');
 // =============================================
 // KONFIGURASI DATABASE — sesuaikan di sini
 // =============================================
-$host   = 'localhost';
-$dbname = 'bumi_kelapa';
-$user   = 'root';
-$pass   = '';
-$port   = 3306;
+$host   = getenv('MYSQLHOST')     ?: 'mysql.railway.internal';
+$dbname = getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'railway';
+$user   = getenv('MYSQLUSER')     ?: 'root';
+$pass   = getenv('MYSQLPASSWORD') ?: 'UWfVrQgJWXzFZXbwxiaBDwbqrEozpAdV';
+$port   = getenv('MYSQLPORT')     ?: '3306';
 
 // =============================================
 // KEAMANAN SEDERHANA — ganti dengan password Anda
