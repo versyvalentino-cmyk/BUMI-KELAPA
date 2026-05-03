@@ -5,7 +5,6 @@ RUN docker-php-ext-install pdo pdo_mysql
 WORKDIR /app
 COPY . /app
 
-EXPOSE 8080
+RUN chmod +x /app/start.sh
 
-ENTRYPOINT ["sh", "-c"]
-CMD ["php -S 0.0.0.0:${PORT:-8080} -t /app"]
+CMD ["/app/start.sh"]
