@@ -10,29 +10,25 @@ $user   = getenv('MYSQLUSER')     ?: 'root';
 $pass   = getenv('MYSQLPASSWORD') ?: 'UWfVrQgJWXzFZXbwxiaBDwbqrEozpAdV';
 $port   = intval(getenv('MYSQLPORT') ?: '3306');
 
-$conn = mysqli_connect($host, $user, $pass, $dbname, $port);
-
-if (!$conn) {
-    echo json_encode(['sukses'=>false,'pesan'=>'Koneksi gagal: '.mysqli_connect_error()]);
+try {
+    $dsn  = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
+    $pdo  = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+} catch (PDOException $e) {
+    echo json_encode(['sukses'=>false,'pesan'=>'Koneksi gagal: '.$e->getMessage()]);
     exit;
 }
-mysqli_set_charset($conn, 'utf8mb4');
 
 $statusValid = ['menunggu_konfirmasi','diproses','dikirim','tiba','dibatalkan'];
 $aksi = $_GET['aksi'] ?? '';
 
 if ($aksi === 'list') {
-    $result = mysqli_query($conn, "
+    $stmt = $pdo->query("
         SELECT id, nama, hp, kecamatan, kelurahan, alamat,
                nama_produk, total_qty, harga_barang, ongkir, total_bayar,
                metode_pembayaran, bank, ewallet, status, tanggal
-        FROM pesanan
-        ORDER BY tanggal DESC
-        LIMIT 500
+        FROM pesanan ORDER BY tanggal DESC LIMIT 500
     ");
-    $rows = [];
-    while ($row = mysqli_fetch_assoc($result)) $rows[] = $row;
-    echo json_encode(['sukses'=>true,'pesanan'=>$rows]);
+    echo json_encode(['sukses'=>true,'pesanan'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
     exit;
 }
 
@@ -47,14 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$id) { echo json_encode(['sukses'=>false,'pesan'=>'ID tidak valid.']); exit; }
         if (!in_array($status, $statusValid)) { echo json_encode(['sukses'=>false,'pesan'=>'Status tidak valid.']); exit; }
 
-        $stmt = mysqli_prepare($conn, "UPDATE pesanan SET status=? WHERE id=?");
-        mysqli_bind_param($stmt, 'si', $status, $id);
-        mysqli_execute($stmt);
+        $stmt = $pdo->prepare("UPDATE pesanan SET status=? WHERE id=?");
+        $stmt->execute([$status, $id]);
 
-        if (mysqli_affected_rows($conn) === 0) {
-            echo json_encode(['sukses'=>false,'pesan'=>'Pesanan tidak ditemukan.']);
-            exit;
-        }
+        if ($stmt->rowCount() === 0) { echo json_encode(['sukses'=>false,'pesan'=>'Pesanan tidak ditemukan.']); exit; }
         echo json_encode(['sukses'=>true,'pesan'=>'Status berhasil diperbarui.']);
         exit;
     }
