@@ -647,7 +647,14 @@
 // CONFIG
 // ============================================================
 const API_PESAN = 'https://bumi-kelapa-production-2a25.up.railway.app/Pesan.php';
-const API_CHAT  = 'https://bumi-kelapa-production-2a25.up.railway.app/chat.php';
+const API_CHAT  = 'https://bumi-kelapa-production-2a25.up.railway.app/chat.php';[phases.setup]
+nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.mysqlnd"]
+
+[phases.build]
+cmds = []
+
+[start]
+cmd = "php -S 0.0.0.0:$PORT -t ."
 // ============================================================
 // ★★★ SISTEM CHAT DENGAN CHATBOT ★★★
 // ============================================================
