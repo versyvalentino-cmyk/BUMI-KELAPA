@@ -1,8 +1,10 @@
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.mysqlnd"]
+nixPkgs = ["php82"]
 
 [phases.build]
-cmds = []
+cmds = [
+  "php -r \"echo phpinfo();\" | grep -i pdo || true"
+]
 
 [start]
 cmd = "php -S 0.0.0.0:$PORT -t ."
