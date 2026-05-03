@@ -1,9 +1,10 @@
 <?php
-define('DB_HOST',    getenv('MYSQLHOST'));
-define('DB_NAME',    getenv('MYSQL_DATABASE'));
-define('DB_USER',    getenv('MYSQLUSER'));
-define('DB_PASS',    getenv('MYSQLPASSWORD'));
-define('DB_PORT',    getenv('MYSQLPORT') ?: '3306');
+define('DB_HOST',    getenv('MYSQLHOST')     ?: 'mysql.railway.internal');
+define('DB_NAME',    getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'railway');
+define('DB_USER',    getenv('MYSQLUSER')     ?: 'root');
+define('DB_PASS',    getenv('MYSQLPASSWORD') ?: 'UWfVrQgJWXzFZXbwxiaBDwbqrEozpAdV');
+define('DB_PORT',    getenv('MYSQLPORT')     ?: '3306');
+define('DB_CHARSET', 'utf8mb4');
 
 function getDB() {
     static $pdo = null;
@@ -26,15 +27,15 @@ function getDB() {
 }
 
 function generateKodePesanan() {
-    $db=getDB();
-    $tgl=date('Ymd');
-    $prefix="BK-{$tgl}-";
-    $stmt=$db->prepare("SELECT COUNT(*) FROM pesanan WHERE kode_pesanan LIKE ?");
+    $db = getDB();
+    $tgl = date('Ymd');
+    $prefix = "BK-{$tgl}-";
+    $stmt = $db->prepare("SELECT COUNT(*) FROM pesanan WHERE kode_pesanan LIKE ?");
     $stmt->execute([$prefix.'%']);
     return $prefix.str_pad((int)$stmt->fetchColumn()+1,3,'0',STR_PAD_LEFT);
 }
 
-function jsonResponse($sukses,$pesan,$data=[]) {
+function jsonResponse($sukses, $pesan, $data=[]) {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(array_merge(['sukses'=>$sukses,'pesan'=>$pesan],$data));
     exit;
