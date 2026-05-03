@@ -5,11 +5,11 @@ header('Access-Control-Allow-Origin: *');
 // =============================================
 // KONFIGURASI DATABASE — sesuaikan di sini
 // =============================================
-$host   = 'localhost';
-$dbname = 'bumi_kelapa';
-$user   = 'root';
-$pass   = '';
-$port   = 3306;
+$host   = getenv('MYSQLHOST')     ?: 'mysql.railway.internal';
+$dbname = getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'railway';
+$user   = getenv('MYSQLUSER')     ?: 'root';
+$pass   = getenv('MYSQLPASSWORD') ?: 'UWfVrQgJWXzFZXbwxiaBDwbqrEozpAdV';
+$port   = intval(getenv('MYSQLPORT') ?: '3306');
 
 $id = intval($_GET['id'] ?? 0);
 $hp = trim($_GET['hp'] ?? '');
@@ -20,7 +20,7 @@ if (!$id || !$hp) {
 }
 
 try {
-    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8", $user, $pass, [
+    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $user, $pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 
