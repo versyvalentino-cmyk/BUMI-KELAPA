@@ -1,10 +1,8 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
 RUN docker-php-ext-install pdo pdo_mysql
 
-COPY . /var/www/html/
+WORKDIR /app
+COPY . /app
 
-RUN echo "Listen \${PORT}" > /etc/apache2/ports.conf && \
-    echo "<VirtualHost *:\${PORT}>\n    DocumentRoot /var/www/html\n    <Directory /var/www/html>\n        AllowOverride All\n        Require all granted\n    </Directory>\n</VirtualHost>" > /etc/apache2/sites-enabled/000-default.conf
-
-CMD ["apache2-foreground"]
+CMD php -d extension=pdo_mysql -S 0.0.0.0:$PORT -t /app
