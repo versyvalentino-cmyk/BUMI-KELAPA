@@ -22,14 +22,73 @@
   letter-spacing: 1px;
   z-index: 2;
 }
+
+/* 360 Viewer */
+#img360 {
+  transition: opacity 0.06s ease;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+}
+#viewer {
+  cursor: grab;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #111;
+}
+#viewer:active { cursor: grabbing; }
+
+/* Hint rotate */
+.hint-360 {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 20px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeHint 3s ease forwards;
+  white-space: nowrap;
+}
+@keyframes fadeHint {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Frame counter */
+.frame-counter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
 
-<header
- style="height:150px; display:flex; justify-content:center; align-items:center;">
-    <img src="logo/NEW.png" alt="Bumi Kelapa" 
-    style="height:225px; width:auto;"></header>
+<header style="height:150px; display:flex; justify-content:center; align-items:center;">
+  <img src="logo/NEW.png" alt="Bumi Kelapa" style="height:225px; width:auto;">
+</header>
 
 <nav>
   <a href="index.html">Beranda</a>
@@ -51,7 +110,7 @@
     <img src="images360/kelapa1.jpeg" alt="Kelapa">
     <div class="galeri-card-info">
       <h3>Kelapa Sudah Dikupas</h3>
-      <p>Klik untuk lihat tampilan 3D</p>
+      <p>Klik untuk lihat tampilan 360°</p>
     </div>
   </div>
 
@@ -84,6 +143,8 @@
   <span class="close" onclick="tutup360()">&times;</span>
   <div class="viewer360" id="viewer">
     <img id="img360" src="images360/kelapa1.jpeg" draggable="false">
+    <div class="hint-360" id="hint360">👆 Geser untuk memutar</div>
+    <div class="frame-counter" id="frameCounter">1 / 6</div>
   </div>
 </div>
 
@@ -102,47 +163,146 @@ function tutupModal() {
   document.getElementById('modalGambar').style.display = 'none';
 }
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') tutupModal();
+  if (e.key === 'Escape') { tutupModal(); tutup360(); }
 });
 
 // ===== MODAL 360 =====
+let current360 = 1;
+const total360 = 6;
+
 function buka360() {
+  current360 = 1;
+  document.getElementById('img360').src = 'images360/kelapa' + current360 + '.jpeg';
+  document.getElementById('frameCounter').textContent = current360 + ' / ' + total360;
   document.getElementById('modal360').style.display = 'block';
-  document.getElementById('img360').src = 'images360/kelapa1.jpeg';
+
+  // Tampilkan hint lagi setiap buka
+  const hint = document.getElementById('hint360');
+  hint.style.animation = 'none';
+  hint.style.opacity = '1';
+  setTimeout(() => { hint.style.animation = 'fadeHint 3s ease forwards'; }, 50);
 }
+
 function tutup360() {
   document.getElementById('modal360').style.display = 'none';
 }
+
 window.onclick = function(e) {
   if (e.target == document.getElementById('modal360')) tutup360();
 }
 
-// ===== DRAG 360 =====
+// ===== 360 SMOOTH ROTATION =====
 document.addEventListener("DOMContentLoaded", function() {
-  let current = 1, total = 6;
-  let img = document.getElementById("img360");
-  let viewer = document.getElementById("viewer");
-  let isDown = false, startX = 0;
+  const img     = document.getElementById("img360");
+  const viewer  = document.getElementById("viewer");
+  const counter = document.getElementById("frameCounter");
+  const TOTAL   = 6;
+  const SENSITIVITY = 2; // px per frame — makin kecil makin sensitif & smooth
 
-  viewer.addEventListener("mousedown", function(e) { isDown = true; startX = e.clientX; });
-  viewer.addEventListener("mouseup", function() { isDown = false; });
-  viewer.addEventListener("mouseleave", function() { isDown = false; });
-  viewer.addEventListener("mousemove", function(e) {
-    if (!isDown) return;
-    let move = e.clientX - startX;
-    if (move > 6) { current--; if (current < 1) current = total; img.src = "images360/kelapa" + current + ".jpeg"; startX = e.clientX; }
-    if (move < -6) { current++; if (current > total) current = 1; img.src = "images360/kelapa" + current + ".jpeg"; startX = e.clientX; }
+  let isDown   = false;
+  let startX   = 0;
+  let accumX   = 0;
+
+  function gantiFrame(arah) {
+    current360 += arah;
+    if (current360 < 1)     current360 = TOTAL;
+    if (current360 > TOTAL) current360 = 1;
+
+    // Fade tipis agar transisi smooth
+    img.style.opacity = '0.75';
+    img.src = "images360/kelapa" + current360 + ".jpeg";
+    counter.textContent = current360 + ' / ' + TOTAL;
+    requestAnimationFrame(() => {
+      img.style.opacity = '1';
+    });
+  }
+
+  // ---- MOUSE ----
+  viewer.addEventListener("mousedown", function(e) {
+    isDown = true;
+    startX = e.clientX;
+    accumX = 0;
+    viewer.style.cursor = 'grabbing';
+    e.preventDefault();
   });
 
-  // Touch (HP)
-  let startTouch = 0;
-  viewer.addEventListener("touchstart", function(e) { startTouch = e.touches[0].clientX; }, {passive: true});
+  document.addEventListener("mouseup", function() {
+    if (isDown) {
+      isDown = false;
+      viewer.style.cursor = 'grab';
+    }
+  });
+
+  document.addEventListener("mousemove", function(e) {
+    if (!isDown) return;
+    const delta = e.clientX - startX;
+    startX  = e.clientX;
+    accumX += delta;
+
+    while (accumX >= SENSITIVITY) {
+      gantiFrame(-1);
+      accumX -= SENSITIVITY;
+    }
+    while (accumX <= -SENSITIVITY) {
+      gantiFrame(1);
+      accumX += SENSITIVITY;
+    }
+  });
+
+  // ---- TOUCH (HP) ----
+  let startTouch  = 0;
+  let accumTouch  = 0;
+  let lastTouch   = 0;
+  let velocity    = 0;
+  let momentumTimer = null;
+
+  viewer.addEventListener("touchstart", function(e) {
+    startTouch = e.touches[0].clientX;
+    lastTouch  = startTouch;
+    accumTouch = 0;
+    velocity   = 0;
+    if (momentumTimer) clearInterval(momentumTimer);
+  }, { passive: true });
+
   viewer.addEventListener("touchmove", function(e) {
     e.preventDefault();
-    let move = e.touches[0].clientX - startTouch;
-    if (move > 6) { current--; if (current < 1) current = total; img.src = "images360/kelapa" + current + ".jpeg"; startTouch = e.touches[0].clientX; }
-    if (move < -6) { current++; if (current > total) current = 1; img.src = "images360/kelapa" + current + ".jpeg"; startTouch = e.touches[0].clientX; }
-  }, {passive: false});
+    const touchX = e.touches[0].clientX;
+    const delta  = touchX - lastTouch;
+    lastTouch    = touchX;
+    velocity     = delta;
+    accumTouch  += delta;
+
+    while (accumTouch >= SENSITIVITY) {
+      gantiFrame(-1);
+      accumTouch -= SENSITIVITY;
+    }
+    while (accumTouch <= -SENSITIVITY) {
+      gantiFrame(1);
+      accumTouch += SENSITIVITY;
+    }
+  }, { passive: false });
+
+  viewer.addEventListener("touchend", function() {
+    // Momentum setelah lepas sentuhan
+    let v = velocity;
+    if (Math.abs(v) < 2) return;
+
+    momentumTimer = setInterval(() => {
+      v *= 0.85; // friction
+      accumTouch += v;
+
+      while (accumTouch >= SENSITIVITY) {
+        gantiFrame(-1);
+        accumTouch -= SENSITIVITY;
+      }
+      while (accumTouch <= -SENSITIVITY) {
+        gantiFrame(1);
+        accumTouch += SENSITIVITY;
+      }
+
+      if (Math.abs(v) < 0.3) clearInterval(momentumTimer);
+    }, 16); // ~60fps
+  }, { passive: true });
 });
 </script>
 
