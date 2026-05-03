@@ -1,6 +1,11 @@
-FROM dunglas/frankenphp:php8.4
+FROM php:8.2-apache
 
-RUN install-php-extensions pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql
 
-ENV FRANKENPHP_CONFIG="worker ./index.php"
-ENV SERVER_NAME=http://
+COPY . /var/www/html/
+
+RUN chmod -R 755 /var/www/html
+
+ENV APACHE_DOCUMENT_ROOT /var/www/html
+
+EXPOSE 80
