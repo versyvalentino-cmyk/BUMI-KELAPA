@@ -413,7 +413,9 @@
 
     <!-- Head -->
     <div class="cw-head">
-      <div class="cw-avatar" id="cwAvatar">🤖</div>
+      <div class="cw-avatar" id="cwAvatar">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><rect x="9" y="1" width="6" height="3" rx="1"/></svg>
+</div>
       <div class="cw-head-info">
         <div class="cw-head-name">Bumi Kelapa</div>
         <div class="cw-head-status">
@@ -440,19 +442,23 @@
 
     <!-- Typing indicator -->
     <div class="msg-row from-bot typing-indicator" id="cwTyping" style="padding:0 12px 6px;">
-      <div class="msg-avatar">🤖</div>
+     <div class="msg-avatar" style="background:#dbeafe;color:#1e40af">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+</div>
       <div class="typing-dots"><span></span><span></span><span></span></div>
     </div>
 
     <!-- Banner mode admin -->
     <div class="cw-admin-banner" id="cwAdminBanner">
-      👨‍💼 Anda sedang terhubung dengan <strong>Admin</strong>. Admin akan segera membalas.
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Anda sedang terhubung dengan <strong>Admin</strong>. Admin akan segera membalas.
     </div>
 
     <!-- Bar eskalasi (tampil saat mode bot) -->
     <div class="cw-eskalasi-bar" id="cwEskalasiBar" style="display:none">
       <span>Perlu bicara dengan manusia?</span>
-      <button class="cw-eskalasi-btn" onclick="eskalasiKeAdmin()">👨‍💼 Hubungi Admin</button>
+      <button class="cw-eskalasi-btn" onclick="eskalasiKeAdmin()">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Hubungi Admin
+</button>
     </div>
 
     <!-- Input pesan -->
@@ -744,23 +750,27 @@ function updateUIMode(mode) {
   const adminBanner = document.getElementById('cwAdminBanner');
 
   if (mode === 'bot') {
-    badge.textContent = '🤖 Chatbot';
+    // mode bot:
+badge.textContent = 'Chatbot';
     badge.className   = 'cw-mode-badge mode-bot';
-    avatar.textContent = '🤖';
+   // mode bot:
+avatar.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><rect x="9" y="1" width="6" height="3" rx="1"/></svg>`;
     statusText.textContent = 'Koko siap membantu';
     eskBar.style.display = 'flex';
     adminBanner.classList.remove('show');
   } else if (mode === 'eskalasi') {
-    badge.textContent = '⏳ Menunggu Admin';
+    badge.textContent = 'Menunggu Admin';
     badge.className   = 'cw-mode-badge mode-eskalasi';
-    avatar.textContent = '🌴';
+   // mode eskalasi:
+avatar.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`;
     statusText.textContent = 'Menunggu admin';
     eskBar.style.display = 'none';
     adminBanner.classList.add('show');
   } else if (mode === 'admin') {
-    badge.textContent = '👨‍💼 Admin';
+    badge.textContent = 'Admin';
     badge.className   = 'cw-mode-badge mode-admin';
-    avatar.textContent = '👨‍💼';
+    // mode admin:
+avatar.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M17 11l2 2 4-4"/></svg>`;
     statusText.textContent = 'Admin sedang membalas';
     eskBar.style.display = 'none';
     adminBanner.classList.add('show');
@@ -887,7 +897,9 @@ function appendBubble(pengirim, pesan, waktu, id) {
   div.className = `msg-row ${isMe ? 'from-me' : (isBot ? 'from-bot' : 'from-admin')}`;
   div.dataset.msgId = id;
 
-  let avatarIcon = isBot ? '🤖' : '👨‍💼';
+  let avatarIcon = isBot 
+  ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><rect x="9" y="1" width="6" height="3" rx="1"/></svg>`
+  : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
   let senderLabel = isBot ? 'Koko (Bot)' : 'Admin';
 
   div.innerHTML = `
