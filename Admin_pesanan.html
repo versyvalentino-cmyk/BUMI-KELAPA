@@ -279,11 +279,11 @@ tr:last-child td { border-bottom:none; }
 <body>
 
 <header>
-  <h1> BUMI KELAPA — Admin Panel</h1>
+<h1>BUMI KELAPA — Admin Panel</h1>
   <div class="header-right">
-    <span id="chatNotifHeader" class="chat-notif-badge">💬 <span id="chatNotifCount">0</span> pesan baru</span>
-    <button class="tab-btn aktif" id="tabPesananBtn" onclick="switchTab('pesanan')">📦 Pesanan</button>
-    <button class="tab-btn" id="tabChatBtn" onclick="switchTab('chat')">💬 Chat</button>
+    <span id="chatNotifHeader" class="chat-notif-badge"><span id="chatNotifCount">0</span> pesan baru</span>
+    <button class="tab-btn aktif" id="tabPesananBtn" onclick="switchTab('pesanan')">Pesanan</button>
+<button class="tab-btn" id="tabChatBtn" onclick="switchTab('chat')">Chat</button>
     <span id="lastRefresh" style="font-size:12px;opacity:.7;"></span>
   </div>
 </header>
@@ -293,7 +293,7 @@ tr:last-child td { border-bottom:none; }
   <!-- ★ SIDEBAR DAFTAR SESI CHAT ★ -->
   <div class="chat-sidebar hidden" id="chatSidebar">
     <div class="cs-header">
-      <span>💬 Sesi Chat</span>
+      <span>Sesi Chat</span>
       <button class="cs-refresh" onclick="muatDaftarSesi()" title="Refresh">↻</button>
     </div>
     <div class="cs-list" id="csDaftarSesi">
@@ -410,7 +410,7 @@ function renderDaftarSesi(sesi) {
   }
   el.innerHTML = sesi.map(s => {
     const modeClass = s.mode === 'eskalasi' ? 'mode-eskalasi' : (s.mode === 'admin' ? 'mode-admin' : 'mode-bot');
-    const modeLabel = s.mode === 'eskalasi' ? '⚡ Perlu Dibalas' : (s.mode === 'admin' ? '✅ Admin' : '🤖 Bot');
+    const modeLabel = s.mode === 'eskalasi' ? 'Perlu Dibalas' : (s.mode === 'admin' ? 'Admin' : 'Bot');
     const preview   = s.pesan_terakhir ? escHtml(s.pesan_terakhir).slice(0,50) + (s.pesan_terakhir.length>50?'...':'') : '-';
     const unread    = parseInt(s.belum_baca) > 0 ? `<div class="sesi-unread">${s.belum_baca}</div>` : '';
     const isAktif   = s.session_id === sesiAktif;
@@ -437,10 +437,10 @@ function updateChatNotif(sesi) {
     count.textContent = totalUnread;
     badge.classList.add('show');
     // Update tab button
-    document.getElementById('tabChatBtn').textContent = `💬 Chat (${totalUnread})`;
+    document.getElementById('tabChatBtn').textContent = `Chat (${totalUnread})`;
   } else {
     badge.classList.remove('show');
-    document.getElementById('tabChatBtn').textContent = '💬 Chat';
+    document.getElementById('tabChatBtn').textContent = 'Chat';
   }
 }
 
@@ -452,7 +452,12 @@ async function bukaSesi(sid, nama, hp, mode) {
   // Update UI header panel
   document.getElementById('cpNama').textContent = nama || 'Tamu';
   document.getElementById('cpSub').textContent  = hp || 'HP tidak tersedia';
-  document.getElementById('cpAvatar').textContent = mode === 'bot' ? '🤖' : (mode === 'eskalasi' ? '⚡' : '👤');
+ const svgAvatar = {
+  bot: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><rect x="9" y="1" width="6" height="3" rx="1"/></svg>`,
+  eskalasi: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`,
+  admin: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`
+};
+document.getElementById('cpAvatar').innerHTML = svgAvatar[mode] || svgAvatar.admin;
   document.getElementById('cpMessages').innerHTML = '<div class="cm-sistem">Memuat percakapan...</div>';
   document.getElementById('chatPanel').classList.add('show');
 
@@ -513,7 +518,9 @@ function appendCpBubble(pengirim, pesan, waktu, id) {
   const isAdmin   = pengirim === 'admin';
   const isBot     = pengirim === 'bot';
   const rowClass  = isAdmin ? 'from-me' : (isBot ? 'from-bot' : 'from-user');
-  const ikon      = isBot ? '🤖' : '👤';
+  const ikon = isBot
+  ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`
+  : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
   const label     = isBot ? 'Koko (Bot)' : (isAdmin ? '' : 'Pembeli');
 
   const div = document.createElement('div');
