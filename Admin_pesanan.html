@@ -336,7 +336,12 @@ tr:last-child td { border-bottom:none; }
       <div class="table-header">
         <h2>Daftar Pesanan</h2>
         <div class="filter-wrap">
-          <input type="text" id="searchInput" placeholder="🔍 Cari nama/HP..." oninput="filterTabel()">
+          <div style="position:relative; display:inline-block;">
+  <svg style="position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none;" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#888" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+  </svg>
+  <input type="text" id="searchInput" placeholder="Cari nama/HP..." oninput="filterTabel()" style="padding: 10px 14px 10px 38px; border: 1.5px solid #e0ede0; border-radius: 10px; font-size: 14px; outline: none; width: 260px;">
+</div>
           <select id="filterStatus" onchange="filterTabel()">
             <option value="">Semua Status</option>
             <option value="menunggu_konfirmasi">Menunggu</option>
