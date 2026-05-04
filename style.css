@@ -1595,3 +1595,94 @@ header {
   }
 
 }
+
+@media (max-width: 768px) {
+
+  /* ===== FIX HEADER SEMUA HALAMAN ===== */
+  header {
+    min-height: 65px !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 10px 16px !important;
+  }
+
+  header img {
+    height: 48px !important;
+  }
+
+  /* ===== FIX NAV ===== */
+  nav {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 !important;
+    white-space: nowrap;
+  }
+
+  nav::-webkit-scrollbar { display: none; }
+
+  nav a {
+    flex-shrink: 0;
+    padding: 12px 14px !important;
+    font-size: 11px !important;
+  }
+
+  /* ===== FIX TENTANG & KONTAK ===== */
+  .tentang-stats {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .stat-card {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 16px !important;
+    padding: 16px !important;
+    text-align: left !important;
+  }
+
+  .stat-card .stat-icon {
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+  }
+
+  .stat-card .stat-num {
+    font-size: 16px !important;
+    margin: 0 0 2px !important;
+  }
+
+  .stat-card .stat-label {
+    font-size: 12px !important;
+  }
+
+  .tentang-hero {
+    padding: 20px 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .tentang-hero h2 { font-size: 18px !important; }
+  .tentang-hero p  { font-size: 13px !important; }
+  .tentang-hero::after { display: none !important; }
+
+  .lokasi-section iframe {
+    height: 220px !important;
+    border-radius: 12px !important;
+  }
+
+  /* ===== FIX FOOTER ===== */
+  footer {
+    margin-top: auto !important;
+    position: relative !important;
+    bottom: 0 !important;
+    width: 100% !important;
+  }
+
+  /* ===== FIX TOMBOL WA ===== */
+  .tentang-wrapper a[href*="wa.me"] {
+    font-size: 13px !important;
+    padding: 11px 20px !important;
+    border-radius: 40px !important;
+  }
+
+}
