@@ -356,6 +356,39 @@
 .track-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:13px; border-radius:10px; border:none; background:#1D9E75; color:#fff; font-size:15px; font-weight:600; cursor:pointer; margin-top:4px; text-decoration:none; }
 .track-btn:hover { background:#15795a; }
 @keyframes spin { to { transform:rotate(360deg); } }
+
+/* Mobile header fix */
+@media (max-width: 768px) {
+  header {
+    padding: 10px 12px !important;
+    min-height: 60px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  header img {
+    height: 45px !important;  /* logo lebih kecil di HP */
+  }
+
+  /* Tombol kanan jadi lebih kecil */
+  header > div:last-child {
+    gap: 6px !important;
+  }
+
+  header > div:last-child button,
+  header > div:last-child a,
+  header > div:last-child div {
+    padding: 6px 8px !important;
+    font-size: 10px !important;
+    border-radius: 16px !important;
+    gap: 4px !important;
+  }
+
+  header > div:last-child svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+}
+
 </style>
 </head>
 <body>
