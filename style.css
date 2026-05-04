@@ -1412,9 +1412,9 @@ header {
   }
 
   header img {
-    height: 48px !important;
+    height: 70px !important;
     width: auto !important;
-    max-height: 48px !important;
+    max-height: 70px !important;
   }
 
   header a, header div[onclick], .chat-trigger-btn {
