@@ -1402,236 +1402,82 @@ header {
 
 @media (max-width: 768px) {
 
-  /* ===== HEADER ===== */
   header {
-    padding: 10px 14px !important;
-    min-height: unset !important;
-    flex-wrap: nowrap;
-    gap: 8px;
-  }
-
-  header img {
-    height: 36px !important;
-  }
-
-  .chat-trigger-btn span.ct-label { display: none; }
-
-  header a, header div[onclick],
-  .chat-trigger-btn {
-    padding: 6px 8px !important;
-    font-size: 11px !important;
-    border-radius: 8px !important;
-    gap: 4px !important;
-  }
-
-  header a span, header div[onclick] span:not(#jumlahKeranjang) {
-    display: none;
-  }
-
-  /* ===== NAV ===== */
-  nav {
-    overflow-x: auto;
-    justify-content: flex-start;
-    padding: 0 8px;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  nav::-webkit-scrollbar { display: none; }
-
-  nav a {
-    padding: 12px 12px;
-    font-size: 11px;
-    letter-spacing: 0.8px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  /* ===== PRODUK ===== */
-  .container { padding: 20px 12px; }
-
-  .products {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px;
-  }
-
-  .card {
-    padding: 16px 12px 12px;
-    width: auto !important;
-  }
-
-  .card h3 { font-size: 13px; }
-  .card p  { font-size: 11px; }
-
-  .harga {
-    font-size: 16px !important;
-    margin: 10px 0 8px !important;
-  }
-
-  .jumlah { gap: 10px; padding: 6px 8px; }
-  .jumlah button { width: 28px; height: 28px; font-size: 15px; }
-  .qty { font-size: 14px; }
-
-  .btn-produk { gap: 6px; }
-  .btn-produk button {
-    font-size: 11px !important;
-    padding: 8px 4px !important;
-    border-radius: 8px !important;
-  }
-
-  /* ===== GALERI ===== */
-  .galeri-grid {
-    grid-template-columns: 1fr !important;
-    padding: 0 12px 24px;
-  }
-
-  .galeri-header { padding: 20px 12px 8px; }
-
-  /* ===== TENTANG & KONTAK ===== */
-  .tentang-wrapper { padding: 16px 12px; }
-  .tentang-hero { padding: 20px 16px; }
-  .tentang-hero::after { display: none; }
-  .tentang-hero h2 { font-size: 18px; }
-  .tentang-stats { grid-template-columns: 1fr !important; gap: 10px; }
-
-  /* ===== POPUP ===== */
-  .popup-content {
-    width: 92% !important;
-    margin: 4% auto !important;
-    padding: 16px !important;
-    border-radius: 16px !important;
-  }
-
-  .row { flex-direction: column; }
-  .row select { width: 100%; }
-
-  /* ===== CHAT ===== */
-  .chat-window {
-    width: calc(100vw - 16px) !important;
-    right: 8px !important;
-    bottom: 8px !important;
-    max-height: 80vh !important;
-  }
-}
-
-@media (max-width: 768px) {
-
-  /* ===== LOGO LEBIH BESAR ===== */
-  header img {
-    height: 52px !important;
-  }
-
-  /* ===== GALERI ===== */
-  .galeri-grid {
-    grid-template-columns: 1fr !important;
-    padding: 0 12px 24px;
-    gap: 16px;
-  }
-
-  .galeri-card img {
-    height: 200px;
-  }
-
-  .galeri-header h2 {
-    font-size: 20px;
-  }
-
-  .galeri-header p {
-    font-size: 13px;
-  }
-
-  /* ===== TENTANG KAMI ===== */
-  .tentang-hero {
-    padding: 20px 16px;
-  }
-
-  .tentang-hero h2 {
-    font-size: 20px;
-  }
-
-  .tentang-hero p {
-    font-size: 13px;
-    line-height: 1.7;
-  }
-
-  .tentang-stats {
-    grid-template-columns: 1fr !important;
-    gap: 12px;
-  }
-
-  .stat-card {
-    padding: 20px 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    text-align: left;
-  }
-
-  .stat-card .stat-icon {
-    flex-shrink: 0;
-    margin: 0;
-  }
-
-  .stat-card .stat-num {
-    font-size: 18px;
-    margin-bottom: 2px;
-  }
-
-  .lokasi-section iframe {
-    height: 260px;
-  }
-
-  /* ===== KONTAK ===== */
-  .stat-card .stat-num[style*="14px"],
-  .stat-card .stat-num[style*="15px"],
-  .stat-card .stat-num[style*="16px"] {
-    font-size: 13px !important;
-    word-break: break-all;
-  }
-
-  /* ===== TOMBOL WA ===== */
-  .tentang-wrapper a[href*="wa.me"] {
-    font-size: 13px;
-    padding: 12px 24px;
-  }
-
-}
-
-@media (max-width: 768px) {
-
-  /* ===== FIX HEADER SEMUA HALAMAN ===== */
-  header {
+    padding: 12px 16px !important;
     min-height: 65px !important;
     height: auto !important;
     overflow: visible !important;
-    padding: 10px 16px !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
   }
 
   header img {
     height: 48px !important;
+    width: auto !important;
+    max-height: 48px !important;
   }
 
-  /* ===== FIX NAV ===== */
+  header a, header div[onclick], .chat-trigger-btn {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+    border-radius: 8px !important;
+  }
+
+  header a span, header div[onclick] span:not(#jumlahKeranjang) { display: none !important; }
+  .chat-trigger-btn span.ct-label { display: none !important; }
+
   nav {
     display: flex !important;
     overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
     padding: 0 !important;
-    white-space: nowrap;
+    justify-content: flex-start !important;
   }
 
-  nav::-webkit-scrollbar { display: none; }
+  nav::-webkit-scrollbar { display: none !important; }
 
   nav a {
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
     padding: 12px 14px !important;
     font-size: 11px !important;
+    white-space: nowrap !important;
+    letter-spacing: 0.8px !important;
   }
 
-  /* ===== FIX TENTANG & KONTAK ===== */
-  .tentang-stats {
-    grid-template-columns: 1fr !important;
+  .container { padding: 20px 12px !important; }
+
+  .products {
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
   }
+
+  .card { padding: 16px 12px 12px !important; width: auto !important; }
+  .card h3 { font-size: 13px !important; }
+  .card p { font-size: 11px !important; }
+  .harga { font-size: 16px !important; margin: 10px 0 8px !important; }
+  .jumlah { gap: 10px !important; padding: 6px 8px !important; }
+  .jumlah button { width: 28px !important; height: 28px !important; }
+  .qty { font-size: 14px !important; }
+  .btn-produk { gap: 6px !important; }
+  .btn-produk button { font-size: 11px !important; padding: 8px 4px !important; }
+
+  .galeri-grid {
+    grid-template-columns: 1fr !important;
+    padding: 0 12px 24px !important;
+    gap: 16px !important;
+  }
+  .galeri-header { padding: 20px 12px 8px !important; }
+  .galeri-header h2 { font-size: 20px !important; }
+  .galeri-card img { height: 200px !important; }
+
+  .tentang-wrapper { padding: 16px 12px !important; }
+  .tentang-hero { padding: 20px 16px !important; border-radius: 14px !important; }
+  .tentang-hero::after { display: none !important; }
+  .tentang-hero h2 { font-size: 18px !important; }
+  .tentang-hero p { font-size: 13px !important; line-height: 1.7 !important; }
+
+  .tentang-stats { grid-template-columns: 1fr !important; gap: 12px !important; }
 
   .stat-card {
     display: flex !important;
@@ -1641,77 +1487,31 @@ header {
     padding: 16px !important;
     text-align: left !important;
   }
+  .stat-card .stat-icon { flex-shrink: 0 !important; margin: 0 !important; }
+  .stat-card .stat-num { font-size: 16px !important; margin: 0 0 2px !important; }
+  .stat-card .stat-label { font-size: 12px !important; }
 
-  .stat-card .stat-icon {
-    flex-shrink: 0 !important;
-    margin: 0 !important;
-  }
+  .lokasi-section iframe { height: 220px !important; border-radius: 12px !important; }
 
-  .stat-card .stat-num {
-    font-size: 16px !important;
-    margin: 0 0 2px !important;
-  }
-
-  .stat-card .stat-label {
-    font-size: 12px !important;
-  }
-
-  .tentang-hero {
-    padding: 20px 16px !important;
-    border-radius: 14px !important;
-  }
-
-  .tentang-hero h2 { font-size: 18px !important; }
-  .tentang-hero p  { font-size: 13px !important; }
-  .tentang-hero::after { display: none !important; }
-
-  .lokasi-section iframe {
-    height: 220px !important;
-    border-radius: 12px !important;
-  }
-
-  /* ===== FIX FOOTER ===== */
-  footer {
-    margin-top: auto !important;
-    position: relative !important;
-    bottom: 0 !important;
-    width: 100% !important;
-  }
-
-  /* ===== FIX TOMBOL WA ===== */
   .tentang-wrapper a[href*="wa.me"] {
     font-size: 13px !important;
     padding: 11px 20px !important;
-    border-radius: 40px !important;
   }
 
-}
-@media (max-width: 768px) {
-  header {
-    padding: 12px 16px !important;
-    min-height: 65px !important;
-    height: auto !important;
-    overflow: visible !important;
+  .popup-content {
+    width: 92% !important;
+    margin: 4% auto !important;
+    padding: 16px !important;
+    border-radius: 16px !important;
   }
 
-  header img {
-    height: 48px !important;
-    width: auto !important;
-    max-height: 48px !important;
+  .row { flex-direction: column !important; }
+
+  .chat-window {
+    width: calc(100vw - 16px) !important;
+    right: 8px !important;
+    bottom: 8px !important;
+    max-height: 80vh !important;
   }
 
-  nav {
-    display: flex !important;
-    overflow-x: auto !important;
-    white-space: nowrap !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-
-  nav::-webkit-scrollbar { display: none !important; }
-
-  nav a {
-    flex-shrink: 0 !important;
-    padding: 12px 14px !important;
-    font-size: 11px !important;
-  }
 }
