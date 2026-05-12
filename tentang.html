@@ -4,6 +4,85 @@
 <meta charset="UTF-8">
 <title>Tentang Kami</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+/* ===== MOBILE ONLY — tidak pengaruhi tampilan laptop ===== */
+@media (max-width: 768px) {
+
+  /* Header — logo tidak terlalu besar */
+  header {
+    padding: 12px 16px !important;
+    min-height: 60px !important;
+  }
+  header img {
+    height: 70px !important;
+  }
+
+  /* Nav — bisa scroll horizontal */
+  nav {
+    display: flex !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    padding: 0 !important;
+  }
+  nav a {
+    flex-shrink: 0 !important;
+    padding: 12px 14px !important;
+    font-size: 11px !important;
+  }
+
+  /* Container utama */
+  .tentang-wrapper,
+  .container {
+    padding: 16px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Hero section */
+  .tentang-hero {
+    padding: 20px 16px !important;
+    text-align: center !important;
+  }
+  .tentang-hero h2 {
+    font-size: 22px !important;
+  }
+  .tentang-hero p {
+    font-size: 13px !important;
+  }
+
+  /* Stats — susun vertikal di HP */
+  .tentang-stats {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 0 !important;
+  }
+  .stat-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 16px !important;
+  }
+
+  /* Peta — responsif penuh */
+  .lokasi-section iframe {
+    width: 100% !important;
+    height: 220px !important;
+  }
+
+  /* Tombol WhatsApp */
+  .tentang-wrapper a[href*="wa.me"] {
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    width: 100% !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+
+}
+</style>
+
 </head>
 
 <body>
