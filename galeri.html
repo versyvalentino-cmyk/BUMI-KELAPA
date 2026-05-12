@@ -134,7 +134,7 @@
 </div>
 
 <script>
-// 360° Viewer - Diperbaiki (lebih smooth & tidak terlalu cepat)
+// 360° Viewer - Versi Final (Smooth & Tanpa Flash)
 let current360 = 1;
 const total360 = 6;
 
@@ -154,20 +154,15 @@ document.addEventListener("DOMContentLoaded", function() {
   let isDragging = false;
   let startX = 0;
   let accum = 0;
-  const sensitivity = 25;     // ← Dinaikkan (dulu 12, sekarang lebih halus)
+  const sensitivity = 22;   // Kecepatan ideal (tidak terlalu cepat)
 
   function gantiFrame(dir) {
     current360 += dir;
     if (current360 < 1) current360 = total360;
     if (current360 > total360) current360 = 1;
     
-    img.style.transition = "opacity 0.12s";
-    img.style.opacity = "0.75";
+    // Tanpa efek flash gelap-terang
     img.src = `images360/kelapa${current360}.jpeg`;
-    
-    setTimeout(() => {
-      img.style.opacity = "1";
-    }, 80);
   }
 
   // Mouse Drag (Laptop)
@@ -194,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  // Touch Swipe (HP) - Lebih halus
+  // Touch Swipe (HP)
   viewer.addEventListener("touchstart", e => {
     isDragging = true;
     startX = e.touches[0].clientX;
