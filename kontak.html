@@ -81,5 +81,21 @@
 
 </div>
 
+<script>
+document.querySelectorAll('nav a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (!href || href.startsWith('#')) return;
+    e.preventDefault();
+    document.body.style.opacity = '0';
+    document.body.style.transform = 'translateY(-8px)';
+    document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    setTimeout(() => {
+      window.location.href = href;
+    }, 300);
+  });
+});
+</script>
+
 </body>
 </html>

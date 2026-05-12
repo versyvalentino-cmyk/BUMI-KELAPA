@@ -1046,5 +1046,22 @@ function tutupPembayaran(){document.getElementById('popupPembayaran').classList.
 function resetPembayaran(){metodeTerpilih=null;ewalletTerpilih=null;bankTerpilih=null;document.querySelectorAll('#popupPembayaran .pm-option').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('.pm-detail').forEach(d=>d.classList.remove('open'));document.getElementById('suksesBox').classList.remove('open');document.querySelectorAll('#popupPembayaran .pm-section-title,#popupPembayaran .pm-option,#popupPembayaran .pm-summary').forEach(el=>el.style.display='');document.getElementById('btnBayar').style.display='';document.getElementById('btnBayar').disabled=true;document.getElementById('btnBayar').textContent='Pilih Metode Pembayaran';document.querySelector('.pm-btn-cancel').style.display='';}
 document.querySelectorAll('.popup').forEach(popup=>{popup.addEventListener('click',function(e){if(e.target===this){this.classList.remove('aktif');if(this.id==='popupPembayaran')resetPembayaran();}});});
 </script>
+
+<script>
+document.querySelectorAll('nav a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (!href || href.startsWith('#')) return;
+    e.preventDefault();
+    document.body.style.opacity = '0';
+    document.body.style.transform = 'translateY(-8px)';
+    document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    setTimeout(() => {
+      window.location.href = href;
+    }, 300);
+  });
+});
+</script>
+
 </body>
 </html>
