@@ -134,6 +134,16 @@
 </div>
 
 <script>
+// Modal Gambar Biasa (Sabut & Tempurung)
+function lihatGambar(img) {
+  document.getElementById('modalImg').src = img.src;
+  document.getElementById('modalGambar').style.display = 'flex';
+}
+
+function tutupModal() {
+  document.getElementById('modalGambar').style.display = 'none';
+}
+
 // 360° Viewer - Versi Final (Smooth & Tanpa Flash)
 let current360 = 1;
 const total360 = 6;
@@ -148,73 +158,20 @@ function tutup360() {
   document.getElementById('modal360').style.display = 'none';
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-  const img = document.getElementById("img360");
-  const viewer = document.getElementById("viewer");
-  let isDragging = false;
-  let startX = 0;
-  let accum = 0;
-  const sensitivity = 22;   // Kecepatan ideal (tidak terlalu cepat)
-
-  function gantiFrame(dir) {
-    current360 += dir;
-    if (current360 < 1) current360 = total360;
-    if (current360 > total360) current360 = 1;
-    
-    // Tanpa efek flash gelap-terang
-    img.src = `images360/kelapa${current360}.jpeg`;
+// Close dengan tombol ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    tutupModal();
+    tutup360();
   }
-
-  // Mouse Drag (Laptop)
-  viewer.addEventListener("mousedown", e => {
-    isDragging = true;
-    startX = e.clientX;
-    accum = 0;
-  });
-
-  document.addEventListener("mouseup", () => isDragging = false);
-  document.addEventListener("mousemove", e => {
-    if (!isDragging) return;
-    const delta = e.clientX - startX;
-    startX = e.clientX;
-    accum += delta;
-
-    while (accum >= sensitivity) { 
-      gantiFrame(-1); 
-      accum -= sensitivity; 
-    }
-    while (accum <= -sensitivity) { 
-      gantiFrame(1); 
-      accum += sensitivity; 
-    }
-  });
-
-  // Touch Swipe (HP)
-  viewer.addEventListener("touchstart", e => {
-    isDragging = true;
-    startX = e.touches[0].clientX;
-    accum = 0;
-  }, {passive: true});
-
-  viewer.addEventListener("touchmove", e => {
-    if (!isDragging) return;
-    const delta = e.touches[0].clientX - startX;
-    startX = e.touches[0].clientX;
-    accum += delta;
-
-    while (accum >= sensitivity) { 
-      gantiFrame(-1); 
-      accum -= sensitivity; 
-    }
-    while (accum <= -sensitivity) { 
-      gantiFrame(1); 
-      accum += sensitivity; 
-    }
-  }, {passive: false});
-
-  viewer.addEventListener("touchend", () => isDragging = false);
 });
 </script>
+
+<!-- MODAL GAMBAR BESAR (Sabut & Tempurung) -->
+<div id="modalGambar" onclick="tutupModal()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center;">
+  <img id="modalImg" style="max-width:90%; max-height:85vh; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+  <div onclick="tutupModal()" style="position:absolute; top:20px; right:25px; color:white; font-size:40px; cursor:pointer; z-index:10;">✕</div>
+</div>
 
 
 </body>
