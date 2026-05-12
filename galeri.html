@@ -134,16 +134,6 @@
 </div>
 
 <script>
-// Modal Gambar Biasa (Sabut & Tempurung)
-function lihatGambar(img) {
-  document.getElementById('modalImg').src = img.src;
-  document.getElementById('modalGambar').style.display = 'flex';
-}
-
-function tutupModal() {
-  document.getElementById('modalGambar').style.display = 'none';
-}
-
 // 360° Viewer - Versi Final (Smooth & Tanpa Flash)
 let current360 = 1;
 const total360 = 6;
@@ -158,13 +148,84 @@ function tutup360() {
   document.getElementById('modal360').style.display = 'none';
 }
 
-// Close dengan tombol ESC
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    tutupModal();
-    tutup360();
+document.addEventListener("DOMContentLoaded", function() {
+  const img = document.getElementById("img360");
+  const viewer = document.getElementById("viewer");
+  let isDragging = false;
+  let startX = 0;
+  let accum = 0;
+  const sensitivity = 22;   // Kecepatan ideal (tidak terlalu cepat)
+
+  function gantiFrame(dir) {
+    current360 += dir;
+    if (current360 < 1) current360 = total360;
+    if (current360 > total360) current360 = 1;
+    
+    // Tanpa efek flash gelap-terang
+    img.src = `images360/kelapa${current360}.jpeg`;
   }
+
+  // Mouse Drag (Laptop)
+  viewer.addEventListener("mousedown", e => {
+    isDragging = true;
+    startX = e.clientX;
+    accum = 0;
+  });
+
+  document.addEventListener("mouseup", () => isDragging = false);
+  document.addEventListener("mousemove", e => {
+    if (!isDragging) return;
+    const delta = e.clientX - startX;
+    startX = e.clientX;
+    accum += delta;
+
+    while (accum >= sensitivity) { 
+      gantiFrame(-1); 
+      accum -= sensitivity; 
+    }
+    while (accum <= -sensitivity) { 
+      gantiFrame(1); 
+      accum += sensitivity; 
+    }
+  });
+
+  // Touch Swipe (HP)
+  viewer.addEventListener("touchstart", e => {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+    accum = 0;
+  }, {passive: true});
+
+  viewer.addEventListener("touchmove", e => {
+    if (!isDragging) return;
+    const delta = e.touches[0].clientX - startX;
+    startX = e.touches[0].clientX;
+    accum += delta;
+
+    while (accum >= sensitivity) { 
+      gantiFrame(-1); 
+      accum -= sensitivity; 
+    }
+    while (accum <= -sensitivity) { 
+      gantiFrame(1); 
+      accum += sensitivity; 
+    }
+  }, {passive: false});
+
+  viewer.addEventListener("touchend", () => isDragging = false);
 });
+</script>
+
+<script>
+// Modal Gambar Biasa (Sabut & Tempurung)
+function lihatGambar(img) {
+  document.getElementById('modalImg').src = img.src;
+  document.getElementById('modalGambar').style.display = 'flex';
+}
+
+function tutupModal() {
+  document.getElementById('modalGambar').style.display = 'none';
+}
 </script>
 
 <!-- MODAL GAMBAR BESAR (Sabut & Tempurung) -->
