@@ -134,13 +134,7 @@
 </div>
 
 <script>
-// Modal biasa
-function lihatGambar(img) {
-  document.getElementById('modalImg').src = img.src;  // kalau ada modal gambar
-  // Tambahkan modal gambar jika diperlukan
-}
-
-// 360° Viewer - BISA DIGESER DI HP DAN LAPTOP
+// 360° Viewer - Diperbaiki (lebih smooth & tidak terlalu cepat)
 let current360 = 1;
 const total360 = 6;
 
@@ -154,28 +148,33 @@ function tutup360() {
   document.getElementById('modal360').style.display = 'none';
 }
 
-// Script Drag (Mouse + Touch)
 document.addEventListener("DOMContentLoaded", function() {
   const img = document.getElementById("img360");
   const viewer = document.getElementById("viewer");
   let isDragging = false;
   let startX = 0;
   let accum = 0;
-  const sensitivity = 12;
+  const sensitivity = 25;     // ← Dinaikkan (dulu 12, sekarang lebih halus)
 
   function gantiFrame(dir) {
     current360 += dir;
     if (current360 < 1) current360 = total360;
     if (current360 > total360) current360 = 1;
-    img.style.opacity = "0.6";
+    
+    img.style.transition = "opacity 0.12s";
+    img.style.opacity = "0.75";
     img.src = `images360/kelapa${current360}.jpeg`;
-    setTimeout(() => img.style.opacity = "1", 80);
+    
+    setTimeout(() => {
+      img.style.opacity = "1";
+    }, 80);
   }
 
   // Mouse Drag (Laptop)
   viewer.addEventListener("mousedown", e => {
     isDragging = true;
     startX = e.clientX;
+    accum = 0;
   });
 
   document.addEventListener("mouseup", () => isDragging = false);
@@ -184,11 +183,18 @@ document.addEventListener("DOMContentLoaded", function() {
     const delta = e.clientX - startX;
     startX = e.clientX;
     accum += delta;
-    while (accum >= sensitivity) { gantiFrame(-1); accum -= sensitivity; }
-    while (accum <= -sensitivity) { gantiFrame(1); accum += sensitivity; }
+
+    while (accum >= sensitivity) { 
+      gantiFrame(-1); 
+      accum -= sensitivity; 
+    }
+    while (accum <= -sensitivity) { 
+      gantiFrame(1); 
+      accum += sensitivity; 
+    }
   });
 
-  // Touch Swipe (HP)
+  // Touch Swipe (HP) - Lebih halus
   viewer.addEventListener("touchstart", e => {
     isDragging = true;
     startX = e.touches[0].clientX;
@@ -200,13 +206,21 @@ document.addEventListener("DOMContentLoaded", function() {
     const delta = e.touches[0].clientX - startX;
     startX = e.touches[0].clientX;
     accum += delta;
-    while (accum >= sensitivity) { gantiFrame(-1); accum -= sensitivity; }
-    while (accum <= -sensitivity) { gantiFrame(1); accum += sensitivity; }
+
+    while (accum >= sensitivity) { 
+      gantiFrame(-1); 
+      accum -= sensitivity; 
+    }
+    while (accum <= -sensitivity) { 
+      gantiFrame(1); 
+      accum += sensitivity; 
+    }
   }, {passive: false});
 
   viewer.addEventListener("touchend", () => isDragging = false);
 });
 </script>
+
 
 </body>
 </html>
