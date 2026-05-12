@@ -93,22 +93,19 @@ document.querySelectorAll('nav a').forEach(link => {
 
     e.preventDefault();
 
-    // Tentukan arah: halaman mana yang dituju vs halaman sekarang
     const pages = ['index.html', 'produk.html', 'galeri.html', 'tentang.html', 'kontak.html'];
     const currentPage = location.pathname.split('/').pop() || 'index.html';
     const currentIndex = pages.indexOf(currentPage);
     const targetIndex  = pages.indexOf(href);
+    const direction    = targetIndex > currentIndex ? '-40px' : '40px';
 
-    // Kalau target di kanan → keluar ke kiri, kalau target di kiri → keluar ke kanan
-    const direction = targetIndex > currentIndex ? '-60px' : '60px';
-
-    document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    document.body.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
     document.body.style.opacity    = '0';
-    document.body.style.transform  = `translateX(${direction})`;
+    document.body.style.transform  = `translateX(${direction}) scale(0.98)`;
 
     setTimeout(() => {
       window.location.href = href;
-    }, 300);
+    }, 180);
   });
 });
 </script>
