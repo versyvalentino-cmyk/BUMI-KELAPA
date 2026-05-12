@@ -105,6 +105,39 @@
     margin-bottom: 12px !important;
   }
 }
+
+  nav {
+    background: white !important;
+    border-top: 1px solid #ddd !important;
+    border-bottom: 1px solid #ddd !important;
+    padding: 12px 0 !important;
+    overflow-x: auto !important;
+    white-space: nowrap;
+    display: flex !important;
+    gap: 8px !important;
+  }
+
+  nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  nav a {
+    flex-shrink: 0 !important;
+    padding: 10px 16px !important;
+    font-size: 13.5px !important;
+    color: #333 !important;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 8px;
+  }
+
+  nav a.active {
+    color: #2d6a2d !important;
+    font-weight: 700 !important;
+    background: #f0f8f0 !important;
+    border-bottom: 3px solid #2d6a2d !important;
+  }
+
 </style>
 
 </head>
@@ -122,12 +155,14 @@
   </div>
 </header>
 
-<nav>
-  <a href="index.html">Beranda</a>
-  <a href="produk.html">Produk</a>
-  <a href="galeri.html">Galeri</a>
-  <a href="tentang.html" class="active">Tentang Kami</a>
-  <a href="kontak.html">Kontak</a>
+<nav style="background: white; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 12px 0;">
+  <div style="display: flex; overflow-x: auto; padding: 0 16px; gap: 10px; scrollbar-width: none;">
+    <a href="index.html">Beranda</a>
+    <a href="produk.html">Produk</a>
+    <a href="galeri.html">Galeri</a>
+    <a href="tentang.html"class="active">Tentang Kami</a>
+    <a href="kontak.html">Kontak</a>
+  </div>
 </nav>
 
 <div class="tentang-wrapper">

@@ -145,6 +145,49 @@
     font-size: 12.5px !important;
   }
 }
+
+  nav {
+    background: white !important;
+    border-top: 1px solid #ddd !important;
+    border-bottom: 1px solid #ddd !important;
+    padding: 12px 0 !important;
+    overflow-x: auto !important;
+    white-space: nowrap;
+    display: flex !important;
+    gap: 8px !important;
+  }
+
+  nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  nav a {
+    flex-shrink: 0 !important;
+    padding: 10px 16px !important;
+    font-size: 13.5px !important;
+    color: #333 !important;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 8px;
+  }
+
+  nav a.active {
+    color: #2d6a2d !important;
+    font-weight: 700 !important;
+    background: #f0f8f0 !important;
+    border-bottom: 3px solid #2d6a2d !important;
+  }
+  
+    .galeri-badge {
+    background: linear-gradient(135deg, #2d6a2d, #c8b87a) !important;
+    color: white !important;
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
 </style>
 
 </head>
@@ -162,12 +205,14 @@
   </div>
 </header>
 
-<nav>
-  <a href="index.html">Beranda</a>
-  <a href="produk.html" class="active">Produk</a>
-  <a href="galeri.html">Galeri</a>
-  <a href="tentang.html">Tentang Kami</a>
-  <a href="kontak.html">Kontak</a>
+<nav style="background: white; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 12px 0;">
+  <div style="display: flex; overflow-x: auto; padding: 0 16px; gap: 10px; scrollbar-width: none;">
+    <a href="index.html">Beranda</a>
+    <a href="produk.html">Produk</a>
+    <a href="galeri.html" class="active">Galeri</a>
+    <a href="tentang.html">Tentang Kami</a>
+    <a href="kontak.html">Kontak</a>
+  </div>
 </nav>
 
 <div class="galeri-header">
@@ -177,14 +222,14 @@
 
 <div class="galeri-grid">
 
-  <div class="galeri-card" onclick="buka360()">
-    <div class="galeri-badge">360°</div>
-    <img src="images360/kelapa1.jpeg" alt="Kelapa">
-    <div class="galeri-card-info">
-      <h3>Kelapa Sudah Dikupas</h3>
-      <p>Klik untuk lihat tampilan 360°</p>
-    </div>
+ <div class="galeri-card" onclick="buka360()">
+  <div class="galeri-badge">360°</div>
+  <img src="images360/kelapa1.jpeg" alt="Kelapa">
+  <div class="galeri-card-info">
+    <h3>Kelapa Sudah Dikupas</h3>
+    <p>Klik untuk lihat tampilan 360°</p>
   </div>
+</div>
 
   <div class="galeri-card" onclick="lihatGambar(this.querySelector('img'))">
     <img src="images/sabut.jpg" alt="Sabut Kelapa">
