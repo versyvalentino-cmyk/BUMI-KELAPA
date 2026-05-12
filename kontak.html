@@ -1,37 +1,42 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Kontak</title>
-<link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang Kami</title>
+    <link rel="stylesheet" href="style.css">
 <style>
-/* ===== MOBILE ONLY — tidak pengaruhi tampilan laptop ===== */
+/* ===== MOBILE ONLY ===== */
 @media (max-width: 768px) {
 
-  /* Header — logo tidak terlalu besar */
   header {
     padding: 12px 16px !important;
-    min-height: 60px !important;
-  }
-  header img {
-    height: 70px !important;
+    min-height: 65px !important;
+    flex-wrap: wrap !important;           /* agar logo tidak memaksa lebar */
   }
 
-  /* Nav — bisa scroll horizontal */
+  /* Override logo yang pakai inline style */
+  header img {
+    height: 65px !important;
+    width: auto !important;
+  }
+
   nav {
     display: flex !important;
     overflow-x: auto !important;
-    justify-content: flex-start !important;
-    padding: 0 !important;
-  }
-  nav a {
-    flex-shrink: 0 !important;
-    padding: 12px 14px !important;
-    font-size: 11px !important;
+    padding: 8px 16px !important;
+    gap: 8px !important;
+    background: #f8f9fa;
+    border-top: 1px solid #ddd;
   }
 
-  /* Container utama */
+  nav a {
+    flex-shrink: 0 !important;
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+    white-space: nowrap;
+  }
+
   .tentang-wrapper,
   .container {
     padding: 16px !important;
@@ -40,60 +45,66 @@
     box-sizing: border-box !important;
   }
 
-  /* Hero section */
   .tentang-hero {
-    padding: 20px 16px !important;
+    padding: 20px 0 !important;
     text-align: center !important;
   }
+
   .tentang-hero h2 {
-    font-size: 22px !important;
-  }
-  .tentang-hero p {
-    font-size: 13px !important;
+    font-size: 24px !important;
+    margin-bottom: 12px !important;
   }
 
-  /* Stats — susun vertikal di HP */
+  .tentang-hero p {
+    font-size: 14.5px !important;
+    line-height: 1.5 !important;
+  }
+
   .tentang-stats {
     display: flex !important;
     flex-direction: column !important;
-    gap: 12px !important;
-    padding: 0 !important;
+    gap: 14px !important;
   }
+
   .stat-card {
     width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 16px !important;
+    padding: 18px !important;
   }
 
-  /* Peta — responsif penuh */
   .lokasi-section iframe {
     width: 100% !important;
-    height: 220px !important;
+    height: 260px !important;
+    border-radius: 12px !important;
   }
 
-  /* Tombol WhatsApp */
-  .tentang-wrapper a[href*="wa.me"] {
-    padding: 12px 24px !important;
-    font-size: 14px !important;
+  /* Tombol WA */
+  a[href*="wa.me"] {
     width: 100% !important;
+    padding: 16px 20px !important;
+    font-size: 16px !important;
     justify-content: center !important;
-    box-sizing: border-box !important;
   }
-
 }
+</style>
+
+
 </style>
 
 </head>
 
 <body>
 
-<header style="background: linear-gradient(135deg, #2d6a2d 0%, #143d14 100%); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; min-height: 80px;">
-
-  <!-- Logo kiri -->
+<header style="background: linear-gradient(135deg, #2d6a2d 0%, #143d14 100%); 
+               padding: 12px 16px; 
+               display: flex; 
+               align-items: center; 
+               justify-content: center; 
+               min-height: 80px;">
+  
   <div style="display: flex; align-items: center; gap: 10px;">
-    <img src="logo/NEW.png" alt="Bumi Kelapa" style="height: 215px;">
+    <img src="logo/NEW.png" alt="Bumi Kelapa" style="height: 85px;"> <!-- dikecilkan sedikit -->
   </div>
-  </header>
+</header>
 
 <nav>
   <a href="index.html">Beranda</a>
