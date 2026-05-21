@@ -3,147 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang Kami</title>
+    <title>Tentang Kami - Bumi Kelapa</title>
     <link rel="stylesheet" href="style.css">
 
 <style>
-/* ===== MOBILE ONLY — tidak mempengaruhi laptop ===== */
-@media (max-width: 768px) {
-
-  header {
-    padding: 12px 16px !important;
-    min-height: 70px !important;
-  }
-
-  header img {
-    height: 70px !important;
-    width: auto !important;
-  }
-
-  /* Navigasi Mobile */
-  nav {
-    background: white !important;
-    border-top: 1px solid #ddd !important;
-    border-bottom: 1px solid #ddd !important;
-    padding: 12px 0 !important;
-    overflow-x: auto !important;
+/* Navigasi */
+nav {
+    background: #fff;
+    border-top: 1px solid #ddd;
+    border-bottom: 3px solid #2d6a2d;
+    padding: 12px 0;
+    overflow-x: auto;
     white-space: nowrap;
-    display: flex !important;
-    gap: 8px !important;
+    display: flex;
+    gap: 8px;
     scrollbar-width: none;
-  }
-
-  nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  nav a {
-    flex-shrink: 0 !important;
-    padding: 10px 14px !important;
-    font-size: 13.5px !important;
-    color: #333 !important;
-    text-decoration: none !important;
-    font-weight: 500;
-    border-radius: 8px;
-  }
-
-  nav a.active {
-    color: #2d6a2d !important;
-    font-weight: 700 !important;
-    background: #f0f8f0 !important;
-    border-bottom: 3px solid #2d6a2d !important;
-  }
-
-  /* Konten Utama */
-  .tentang-wrapper,
-  .container {
-    padding: 0 16px !important;
-    margin: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .tentang-hero {
-    padding: 24px 0 16px 0 !important;
-    text-align: center !important;
-  }
-
-  .tentang-hero h2 {
-    font-size: 26px !important;
-    margin-bottom: 12px !important;
-  }
-
-  .tentang-hero p {
-    font-size: 15px !important;
-    line-height: 1.5 !important;
-  }
-
-  .tentang-stats {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-  }
-
-  .stat-card {
-    width: 100% !important;
-    padding: 18px !important;
-    margin: 0 !important;
-  }
-
-  .lokasi-section {
-    margin-top: 20px !important;
-  }
-
-  .lokasi-section iframe {
-    width: 100% !important;
-    height: 260px !important;
-    border-radius: 12px !important;
-  }
-
-  .lokasi-section h3 {
-    font-size: 18px !important;
-    margin-bottom: 12px !important;
-  }
 }
 
-  nav {
-    background: white !important;
-    border-top: 1px solid #ddd !important;
-    border-bottom: 1px solid #ddd !important;
-    padding: 12px 0 !important;
-    overflow-x: auto !important;
-    white-space: nowrap;
-    display: flex !important;
-    gap: 8px !important;
-  }
-
-  nav::-webkit-scrollbar {
+nav::-webkit-scrollbar {
     display: none;
-  }
+}
 
-  nav a {
-    flex-shrink: 0 !important;
-    padding: 10px 16px !important;
-    font-size: 13.5px !important;
-    color: #333 !important;
+nav a {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    color: #333;
     text-decoration: none;
     font-weight: 500;
     border-radius: 8px;
-  }
+    font-size: 14px;
+}
 
-  nav a.active {
-    color: #2d6a2d !important;
-    font-weight: 700 !important;
-    background: #f0f8f0 !important;
-    border-bottom: 3px solid #2d6a2d !important;
-  }
+nav a:hover {
+    background: #f0f8f0;
+}
 
+nav a.active {
+    color: #2d6a2d;
+    font-weight: 700;
+    background: #f0f8f0;
+    border-bottom: 3px solid #2d6a2d;
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+    header {
+        padding: 12px 16px !important;
+        min-height: 70px !important;
+    }
+    
+    header img {
+        height: 70px !important;
+    }
+
+    nav {
+        padding: 10px 0 !important;
+    }
+    
+    nav a {
+        padding: 9px 14px !important;
+        font-size: 13.5px !important;
+    }
+}
 </style>
 
 </head>
-
 <body class="tentang">
 
+<!-- HEADER -->
 <header style="background: linear-gradient(135deg, #2d6a2d 0%, #143d14 100%); 
                padding: 12px 16px; 
                display: flex; 
@@ -155,12 +82,13 @@
   </div>
 </header>
 
-<nav style="background:#fff !important; border-top:1px solid #ddd !important; border-bottom:2px solid #2d6a2d !important; padding:12px 0 !important; overflow-x:auto !important; white-space:nowrap; display:flex !important; gap:8px;">
-  <a href="index.html" style="padding:10px 16px; color:#333; text-decoration:none; font-weight:500;">Beranda</a>
-  <a href="produk.html" style="padding:10px 16px; color:#333; text-decoration:none; font-weight:500;">Produk</a>
-  <a href="galeri.html" style="padding:10px 16px; color:#2d6a2d; text-decoration:none; font-weight:700; border-bottom:3px solid #2d6a2d;">Galeri</a>
-  <a href="tentang.html" class="active" style="padding:10px 16px; color:#333; text-decoration:none; font-weight:500;">Tentang Kami</a>
-  <a href="kontak.html" style="padding:10px 16px; color:#333; text-decoration:none; font-weight:500;">Kontak</a>
+<!-- NAVIGASI -->
+<nav>
+  <a href="index.html">Beranda</a>
+  <a href="produk.html">Produk</a>
+  <a href="galeri.html">Galeri</a>
+  <a href="tentang.html" class="active">Tentang Kami</a>
+  <a href="kontak.html">Kontak</a>
 </nav>
 
 <div class="tentang-wrapper">
@@ -171,7 +99,7 @@
   </div>
 
   <div class="tentang-stats">
-
+    <!-- Stat cards kamu tetap sama -->
     <div class="stat-card">
       <div class="stat-icon">
         <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#2d6a2d" stroke-width="1.8">
@@ -201,19 +129,13 @@
       <div class="stat-num">COD</div>
       <div class="stat-label">Antar ke Rumah</div>
     </div>
-
   </div>
 
+  <!-- Lokasi tetap sama -->
   <div class="lokasi-section">
-    <h3>
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#2d6a2d" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-      </svg>
-      Lokasi Kami
-    </h3>
+    <h3>📍 Lokasi Kami</h3>
     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1524.0374676555184!2d128.12736059358645!3d-3.77553989970134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2d6cdd0003339acb%3A0xdb55724ad7cd120b!2sBUMI%20KELAPA!5e1!3m2!1sid!2sid!4v1775735124738!5m2!1sid!2sid" 
-     width="1160" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+     width="100%" height="450" style="border:0; border-radius:12px;" allowfullscreen="" loading="lazy"></iframe>
   </div>
 
 </div>
@@ -223,18 +145,14 @@ document.querySelectorAll('nav a').forEach(link => {
   link.addEventListener('click', function(e) {
     const href = this.getAttribute('href');
     if (!href || href.startsWith('#')) return;
+    
     e.preventDefault();
-    const pages = ['index.html', 'produk.html', 'galeri.html', 'tentang.html', 'kontak.html'];
-    const currentPage = location.pathname.split('/').pop() || 'index.html';
-    const currentIndex = pages.indexOf(currentPage);
-    const targetIndex  = pages.indexOf(href);
-    const direction    = targetIndex > currentIndex ? '-40px' : '40px';
+    document.body.style.transition = 'opacity 0.2s ease';
+    document.body.style.opacity = '0';
 
-    document.body.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
-    document.body.style.opacity    = '0';
-    document.body.style.transform  = `translateX(${direction}) scale(0.98)`;
-
-    setTimeout(() => { window.location.href = href; }, 180);
+    setTimeout(() => {
+      window.location.href = href;
+    }, 200);
   });
 });
 </script>
