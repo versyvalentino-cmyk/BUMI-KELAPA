@@ -7,31 +7,39 @@
     <link rel="stylesheet" href="style.css">
 
 <style>
-/* ===== FORCE NAV - Harus muncul di semua perangkat ===== */
+/* ===== NAVIGASI - KHUSUS DESKTOP + MOBILE ===== */
+
+/* Desktop / Laptop */
 nav {
     background: #ffffff !important;
     border-top: 1px solid #ddd !important;
     border-bottom: 4px solid #2d6a2d !important;
-    padding: 12px 0 !important;
+    padding: 16px 0 !important;
     display: flex !important;
     justify-content: center !important;
-    gap: 8px !important;
+    gap: 12px !important;
     overflow-x: auto !important;
     white-space: nowrap !important;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1) !important;
-    z-index: 100 !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+    z-index: 999 !important;
 }
 
-nav::-webkit-scrollbar {
-    display: none !important;
+/* Mobile */
+@media (max-width: 768px) {
+    nav {
+        justify-content: flex-start !important;
+        padding: 12px 0 !important;
+        padding-left: 12px !important;
+    }
 }
 
+/* Style Link */
 nav a {
-    padding: 10px 16px !important;
+    padding: 10px 18px !important;
     color: #333 !important;
     text-decoration: none !important;
     font-weight: 500 !important;
-    font-size: 15px !important;
+    font-size: 15.5px !important;
     border-radius: 8px !important;
     transition: all 0.2s !important;
     flex-shrink: 0 !important;
@@ -46,20 +54,11 @@ nav a.active {
     color: #2d6a2d !important;
     font-weight: 700 !important;
     background: #e8f5e8 !important;
-    border-bottom: 3px solid #2d6a2d !important;
+    border-bottom: 4px solid #2d6a2d !important;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-    nav {
-        justify-content: flex-start !important;
-        padding: 10px 0 !important;
-        padding-left: 12px !important;
-    }
-    nav a {
-        padding: 9px 14px !important;
-        font-size: 13.8px !important;
-    }
+nav::-webkit-scrollbar {
+    display: none !important;
 }
 </style>
 
