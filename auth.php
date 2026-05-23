@@ -1,16 +1,11 @@
 <?php
 require_once 'Config.php';
-session_start();
 
 $aksi = $_GET['aksi'] ?? ($_POST['aksi'] ?? '');
 
 // ===== CEK SESSION =====
 if ($aksi === 'cek') {
-    if (isset($_SESSION['user'])) {
-        jsonResponse(true, 'Login', ['user' => $_SESSION['user']]);
-    } else {
-        jsonResponse(false, 'Belum login');
-    }
+    jsonResponse(true, 'Server OK');
 }
 
 // ===== REGISTER / LOGIN =====
