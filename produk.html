@@ -1293,28 +1293,97 @@ document.querySelectorAll('nav a').forEach(link => {
   link.addEventListener('click', function(e) {
     const href = this.getAttribute('href');
     if (!href || href.startsWith('#')) return;
-
     e.preventDefault();
-
     const pages = ['index.html', 'produk.html', 'galeri.html', 'tentang.html', 'kontak.html'];
-    const currentPage = location.pathname.split('/').pop() || 'index.html';
+    const currentPage  = location.pathname.split('/').pop() || 'index.html';
     const currentIndex = pages.indexOf(currentPage);
     const targetIndex  = pages.indexOf(href);
     const direction    = targetIndex > currentIndex ? '-40px' : '40px';
-
     document.body.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
     document.body.style.opacity    = '0';
     document.body.style.transform  = `translateX(${direction}) scale(0.98)`;
-
-    setTimeout(() => {
-      window.location.href = href;
-    }, 180);
+    setTimeout(() => { window.location.href = href; }, 180);
   });
 });
-</script>
 
-<script>
-// ===== CEK LOGIN & AUTO-ISI FORM =====
+// ===== VARIABEL GLOBAL ALAMAT =====
+let alamatTersimpan = [];
+let alamatDipilih   = null;
+const API_AUTH = 'https://bumi-kelapa-production-2a25.up.railway.app/auth.php';
+
+// ===== LOAD ALAMAT UNTUK FORM PESAN =====
+async function loadAlamatUntukPesan() {
+  const user = JSON.parse(localStorage.getItem('bk_user') || 'null');
+  if (!user) return;
+  try {
+    const res  = await fetch(`${API_AUTH}?aksi=alamat_list&hp=${encodeURIComponent(user.hp)}`);
+    const data = await res.json();
+    alamatTersimpan = data.alamat || [];
+    if (alamatTersimpan.length > 0) {
+      document.getElementById('sectionPilihAlamat').style.display = 'block';
+      const utama = alamatTersimpan.find(a => a.is_utama == 1) || alamatTersimpan[0];
+      alamatDipilih = null;
+      renderAlamatPesan();
+      if (utama) pilihAlamat(utama);
+    } else {
+      document.getElementById('sectionPilihAlamat').style.display = 'none';
+      if (user.nama)      document.getElementById('namaPembeli').value  = user.nama;
+      if (user.hp)        document.getElementById('hpPembeli').value    = user.hp;
+      if (user.alamat)    document.getElementById('alamatDetail').value = user.alamat;
+      if (user.kecamatan) {
+        document.getElementById('kecamatan').value = user.kecamatan;
+        isiKelurahan();
+        setTimeout(() => {
+          if (user.kelurahan) {
+            document.getElementById('kelurahan').value = user.kelurahan;
+            hitungOngkir();
+          }
+        }, 200);
+      }
+    }
+  } catch(e) { console.log('error:', e.message); }
+}
+
+function renderAlamatPesan() {
+  const el = document.getElementById('listAlamatPesan');
+  if (!el) return;
+  el.innerHTML = alamatTersimpan.map(a => `
+    <div onclick='pilihAlamat(${JSON.stringify(a).replace(/'/g, "\\'")})'
+      style="border:2px solid ${alamatDipilih&&alamatDipilih.id==a.id?'#2d6a2d':'#e0ede0'};
+      background:${alamatDipilih&&alamatDipilih.id==a.id?'#f0fdf6':'white'};
+      border-radius:10px; padding:12px 14px; margin-bottom:8px; cursor:pointer;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:700;background:#f0f0f0;padding:2px 8px;border-radius:20px;color:#555;">${a.label||'Rumah'}</span>
+        ${a.is_utama==1?'<span style="font-size:11px;color:#2d6a2d;font-weight:700;">✓ Utama</span>':''}
+        ${alamatDipilih&&alamatDipilih.id==a.id?'<span style="font-size:11px;color:#2d6a2d;font-weight:700;margin-left:auto;">✓ Dipilih</span>':''}
+      </div>
+      <div style="font-size:13px;font-weight:700;color:#1a3a1a;">${a.nama_penerima}</div>
+      <div style="font-size:12px;color:#888;">${a.no_hp||''}</div>
+      <div style="font-size:12px;color:#555;margin-top:2px;">${a.alamat}, ${(a.kelurahan||'').replace(/\b\w/g,c=>c.toUpperCase())}, ${(a.kecamatan||'').replace(/\b\w/g,c=>c.toUpperCase())}</div>
+    </div>
+  `).join('');
+}
+
+function pilihAlamat(alamat) {
+  if (typeof alamat === 'string') alamat = JSON.parse(alamat);
+  alamatDipilih = alamat;
+  renderAlamatPesan();
+  document.getElementById('namaPembeli').value  = alamat.nama_penerima || '';
+  document.getElementById('hpPembeli').value    = alamat.no_hp || '';
+  document.getElementById('alamatDetail').value = alamat.alamat || '';
+  if (alamat.kecamatan) {
+    document.getElementById('kecamatan').value = alamat.kecamatan;
+    isiKelurahan();
+    setTimeout(() => {
+      if (alamat.kelurahan) {
+        document.getElementById('kelurahan').value = alamat.kelurahan;
+        hitungOngkir();
+      }
+    }, 200);
+  }
+}
+
+// ===== CEK LOGIN =====
 function cekLoginHeader() {
   const user = JSON.parse(localStorage.getItem('bk_user') || 'null');
   if (user) {
@@ -1325,22 +1394,19 @@ function cekLoginHeader() {
   }
 }
 
-// Auto-isi form pesanan jika sudah login
+// ===== AUTO ISI FORM DARI LOGIN =====
 function autoIsiFormDariLogin() {
   const user = JSON.parse(localStorage.getItem('bk_user') || 'null');
   if (!user) return;
-
   document.getElementById('labelLoginHeader').textContent = user.nama ? user.nama.split(' ')[0] : 'Profil';
-
   const orisBukaFormData = bukaFormData;
   window.bukaFormData = function() {
     orisBukaFormData();
-    loadAlamatUntukPesan();
+    setTimeout(() => loadAlamatUntukPesan(), 200);
   };
 }
 
 autoIsiFormDariLogin();
 </script>
-
 </body>
 </html>
