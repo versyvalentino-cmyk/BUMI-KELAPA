@@ -256,7 +256,7 @@ async function simpanAlamatBaru() {
     const data = await res.json();
     if (data.sukses) {
       tutupFormAlamat();
-      loadAlamat();
+     
     } else {
       alert(data.pesan);
     }
@@ -272,7 +272,7 @@ async function hapusAlamat(id) {
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ id, hp: user.hp })
   });
-  loadAlamat();
+
 }
 
 async function jadikanUtama(id) {
@@ -281,11 +281,10 @@ async function jadikanUtama(id) {
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ id, hp: user.hp })
   });
-  loadAlamat();
+  
 }
 
-// Load alamat saat halaman dibuka
-loadAlamat();
+
 
 const dataWilayah = {
   "nusaniwe":["latuhalat","seilale","amahusu","air salobar","nusaniwe","benteng","kudamati","wainitu","mangga dua","urimessing","waihaong","silale","wakasihu"],
@@ -362,6 +361,7 @@ function logout() {
  fetch('https://bumi-kelapa-production-2a25.up.railway.app/auth.php?aksi=logout');
   window.location.href = 'produk.html';
 }
+if (user) loadAlamat();
 </script>
 </body>
 </html>
