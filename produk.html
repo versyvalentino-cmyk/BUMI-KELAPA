@@ -1322,25 +1322,10 @@ function autoIsiFormDariLogin() {
 
   document.getElementById('labelLoginHeader').textContent = user.nama ? user.nama.split(' ')[0] : 'Profil';
 
-  // Auto-isi saat form pesanan dibuka
   const orisBukaFormData = bukaFormData;
   window.bukaFormData = function() {
     orisBukaFormData();
-    setTimeout(() => {
-      if (user.nama)  document.getElementById('namaPembeli').value  = user.nama;
-      if (user.hp)    document.getElementById('hpPembeli').value    = user.hp;
-      if (user.alamat) document.getElementById('alamatDetail').value = user.alamat;
-      if (user.kecamatan) {
-        document.getElementById('kecamatan').value = user.kecamatan;
-        isiKelurahan();
-        setTimeout(() => {
-          if (user.kelurahan) {
-            document.getElementById('kelurahan').value = user.kelurahan;
-            hitungOngkir();
-          }
-        }, 200);
-      }
-    }, 100);
+    loadAlamatUntukPesan();
   };
 }
 
