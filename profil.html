@@ -173,7 +173,7 @@ async function simpanProfil() {
   if (!nama) { alert('Nama wajib diisi.'); return; }
 
   try {
-    const res  = await fetch('auth.php?aksi=update', {
+    const res = await fetch('https://bumi-kelapa-production-2a25.up.railway.app/auth.php?aksi=update', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ nama, kecamatan, kelurahan, alamat })
@@ -195,7 +195,7 @@ async function simpanProfil() {
 
 function logout() {
   localStorage.removeItem('bk_user');
-  fetch('auth.php?aksi=logout');
+ fetch('https://bumi-kelapa-production-2a25.up.railway.app/auth.php?aksi=logout');
   window.location.href = 'produk.html';
 }
 </script>
