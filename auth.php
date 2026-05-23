@@ -111,6 +111,19 @@ if ($aksi === 'alamat_list' && $_SERVER['REQUEST_METHOD'] === 'GET') {
 
 // ===== SIMPAN ALAMAT BARU =====
 if ($aksi === 'alamat_simpan' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $db = getDB();
+    $db->exec("CREATE TABLE IF NOT EXISTS alamat_user (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        hp VARCHAR(20) NOT NULL,
+        label VARCHAR(50) DEFAULT 'Rumah',
+        nama_penerima VARCHAR(100),
+        no_hp VARCHAR(20),
+        kecamatan VARCHAR(100),
+        kelurahan VARCHAR(100),
+        alamat TEXT,
+        is_utama TINYINT DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     $data          = json_decode(file_get_contents('php://input'), true);
     $hp            = trim($data['hp'] ?? '');
     $label         = trim($data['label'] ?? 'Rumah');
