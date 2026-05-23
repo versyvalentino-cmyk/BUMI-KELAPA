@@ -132,14 +132,12 @@ async function prosesLogin() {
   const hp   = document.getElementById('inputHp').value.trim();
   const nama = document.getElementById('inputNama').value.trim();
   const err  = document.getElementById('loginErr');
-
-  if (!hp) { tampilErr('Nomor HP wajib diisi.'); return; }
-  if (tahap === 2 && !nama) { tampilErr('Nama wajib diisi.'); return; }
-
   err.style.display = 'none';
 
+  if (!hp) { tampilErr('Nomor HP wajib diisi.'); return; }
+
   try {
-    const res = await fetch('https://bumi-kelapa-production-2a25.up.railway.app/auth.php?aksi=login', {
+    const res  = await fetch('https://bumi-kelapa-production-2a25.up.railway.app/auth.php?aksi=login', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ hp, nama })
@@ -147,12 +145,15 @@ async function prosesLogin() {
     const data = await res.json();
 
     if (data.sukses) {
-      // Simpan ke localStorage
       localStorage.setItem('bk_user', JSON.stringify(data.user));
-      // Redirect ke halaman sebelumnya atau produk
       const redirect = localStorage.getItem('bk_redirect') || 'produk.html';
       localStorage.removeItem('bk_redirect');
       window.location.href = redirect;
+    } else if (data.pesan === 'Nama wajib diisi untuk pendaftaran.') {
+      // Tampilkan field nama
+      document.getElementById('fieldNama').style.display = 'block';
+      document.getElementById('inputNama').focus();
+      tampilErr('Nomor baru — masukkan nama Anda lalu tekan Lanjutkan.');
     } else {
       tampilErr(data.pesan);
     }
@@ -170,6 +171,7 @@ function tampilErr(pesan) {
 document.getElementById('inputHp').addEventListener('keydown', e => {
   if (e.key === 'Enter') prosesLogin();
 });
+
 </script>
 </body>
 </html>
