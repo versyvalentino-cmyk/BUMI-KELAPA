@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil - Bumi Kelapa</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.profil-wrapper {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+.profil-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  margin-bottom: 16px;
+}
+.profil-avatar {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, #2d6a2d, #c8b87a);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 800; color: white;
+  margin: 0 auto 16px;
+}
+.profil-nama {
+  font-size: 18px; font-weight: 800;
+  color: #1a3a1a; text-align: center; margin-bottom: 4px;
+}
+.profil-hp {
+  font-size: 13px; color: #888;
+  text-align: center; margin-bottom: 20px;
+}
+.profil-input {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid #e0ede0; border-radius: 10px;
+  font-size: 14px; font-family: inherit; outline: none;
+  box-sizing: border-box; margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.profil-input:focus { border-color: #2d6a2d; }
+.profil-label {
+  font-size: 12px; font-weight: 600;
+  color: #555; margin-bottom: 4px; display: block;
+}
+.profil-btn {
+  width: 100%; padding: 12px;
+  background: linear-gradient(135deg, #2d6a2d, #1a3a1a);
+  color: white; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  margin-top: 4px; transition: opacity 0.2s;
+}
+.profil-btn:hover { opacity: 0.9; }
+.profil-btn-logout {
+  width: 100%; padding: 12px;
+  background: white; color: #cc0000;
+  border: 1.5px solid #ffcccc; border-radius: 10px;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  margin-top: 8px;
+}
+.sukses-msg {
+  background: #f0fdf6; border: 1px solid #6ee7b7;
+  color: #065f46; padding: 10px 14px;
+  border-radius: 8px; font-size: 13px;
+  margin-bottom: 12px; display: none;
+}
+</style>
+</head>
+<body>
+
+<header style="background: linear-gradient(135deg, #2d6a2d 0%, #143d14 100%); padding: 14px 24px; display: flex; align-items: center; justify-content: center; min-height: 70px;">
+  <img src="logo/NEW.png" alt="Bumi Kelapa" style="height: 55px; width: auto; object-fit: contain;">
+</header>
+
+<nav>
+  <a href="index.html">Beranda</a>
+  <a href="produk.html">Produk</a>
+  <a href="galeri.html">Galeri</a>
+  <a href="tentang.html">Tentang Kami</a>
+  <a href="kontak.html">Kontak</a>
+</nav>
+
+<div class="profil-wrapper">
+  <div class="profil-card">
+    <div class="profil-avatar" id="profilAvatar">?</div>
+    <div class="profil-nama" id="profilNama">-</div>
+    <div class="profil-hp" id="profilHp">-</div>
+
+    <div class="sukses-msg" id="suksesMsg">✓ Profil berhasil diperbarui!</div>
+
+    <label class="profil-label">Nama Lengkap</label>
+    <input class="profil-input" type="text" id="editNama" placeholder="Nama lengkap">
+
+    <label class="profil-label">Nomor HP</label>
+    <input class="profil-input" type="tel" id="editHp" disabled style="background:#f5f5f5; color:#999;">
+
+    <label class="profil-label">Kecamatan</label>
+    <select class="profil-input" id="editKecamatan" onchange="isiKelurahanProfil()">
+      <option value="">-- Pilih Kecamatan --</option>
+      <option value="nusaniwe">Nusaniwe</option>
+      <option value="sirimau">Sirimau</option>
+      <option value="teluk ambon">Teluk Ambon</option>
+      <option value="baguala">Baguala</option>
+      <option value="leitimur selatan">Leitimur Selatan</option>
+    </select>
+
+    <label class="profil-label">Kelurahan</label>
+    <select class="profil-input" id="editKelurahan">
+      <option value="">-- Pilih Kelurahan --</option>
+    </select>
+
+    <label class="profil-label">Alamat Lengkap</label>
+    <input class="profil-input" type="text" id="editAlamat" placeholder="Contoh: Jl. Pattimura No. 5">
+
+    <button class="profil-btn" onclick="simpanProfil()">Simpan Perubahan</button>
+    <button class="profil-btn-logout" onclick="logout()">Keluar</button>
+  </div>
+</div>
+
+<script>
+const dataWilayah = {
+  "nusaniwe":["latuhalat","seilale","amahusu","air salobar","nusaniwe","benteng","kudamati","wainitu","mangga dua","urimessing","waihaong","silale","wakasihu"],
+  "sirimau":["honipopu","ahusen","batu meja","karang panjang","amantelu","rijali","uritetu","batu gajah","batu merah","pandan kasturi","galala","hative kecil","soya","waihoka"],
+  "teluk ambon":["poka","rumah tiga","wayame","hative besar","hunuth","tawiri","laha","tihu"],
+  "baguala":["halong","lateri","latta","nania","negeri lama","passo","waiheru"],
+  "leitimur selatan":["kilang","hutumuri","naku","seri","eirene"]
+};
+
+function isiKelurahanProfil() {
+  const kec = document.getElementById('editKecamatan').value;
+  const sel = document.getElementById('editKelurahan');
+  sel.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+  (dataWilayah[kec]||[]).forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = k.replace(/\b\w/g, c => c.toUpperCase());
+    sel.appendChild(opt);
+  });
+}
+
+// Load user dari localStorage
+const user = JSON.parse(localStorage.getItem('bk_user') || 'null');
+if (!user) {
+  window.location.href = 'login.html';
+} else {
+  document.getElementById('profilAvatar').textContent = user.nama ? user.nama[0].toUpperCase() : '?';
+  document.getElementById('profilNama').textContent = user.nama || '-';
+  document.getElementById('profilHp').textContent = user.hp || '-';
+  document.getElementById('editNama').value = user.nama || '';
+  document.getElementById('editHp').value = user.hp || '';
+  document.getElementById('editAlamat').value = user.alamat || '';
+
+  if (user.kecamatan) {
+    document.getElementById('editKecamatan').value = user.kecamatan;
+    isiKelurahanProfil();
+    setTimeout(() => {
+      document.getElementById('editKelurahan').value = user.kelurahan || '';
+    }, 100);
+  }
+}
+
+async function simpanProfil() {
+  const nama      = document.getElementById('editNama').value.trim();
+  const kecamatan = document.getElementById('editKecamatan').value;
+  const kelurahan = document.getElementById('editKelurahan').value;
+  const alamat    = document.getElementById('editAlamat').value.trim();
+
+  if (!nama) { alert('Nama wajib diisi.'); return; }
+
+  try {
+    const res  = await fetch('auth.php?aksi=update', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ nama, kecamatan, kelurahan, alamat })
+    });
+    const data = await res.json();
+    if (data.sukses) {
+      const updated = {...user, nama, kecamatan, kelurahan, alamat};
+      localStorage.setItem('bk_user', JSON.stringify(updated));
+      document.getElementById('profilAvatar').textContent = nama[0].toUpperCase();
+      document.getElementById('profilNama').textContent = nama;
+      const msg = document.getElementById('suksesMsg');
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 3000);
+    }
+  } catch(e) {
+    alert('Gagal menyimpan.');
+  }
+}
+
+function logout() {
+  localStorage.removeItem('bk_user');
+  fetch('auth.php?aksi=logout');
+  window.location.href = 'produk.html';
+}
+</script>
+</body>
+</html>
