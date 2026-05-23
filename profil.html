@@ -176,7 +176,7 @@ async function simpanProfil() {
     const res = await fetch('https://bumi-kelapa-production-2a25.up.railway.app/auth.php?aksi=update', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ nama, kecamatan, kelurahan, alamat })
+      body: JSON.stringify({ hp: user.hp, nama, kecamatan, kelurahan, alamat })
     });
     const data = await res.json();
     if (data.sukses) {

@@ -56,21 +56,26 @@ if ($aksi === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ===== UPDATE PROFIL =====
-if ($aksi === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_SESSION['user'])) jsonResponse(false, 'Belum login.');
+if ($aksi === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') 
+    if ($aksi === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $data      = json_decode(file_get_contents('php://input'), true);
+    $hp        = trim($data['hp'] ?? '');
     $nama      = trim($data['nama'] ?? '');
     $kecamatan = trim($data['kecamatan'] ?? '');
     $kelurahan = trim($data['kelurahan'] ?? '');
     $alamat    = trim($data['alamat'] ?? '');
-    $id        = $_SESSION['user']['id'];
+
+    if (!$hp) jsonResponse(false, 'HP tidak ditemukan.');
 
     $db = getDB();
-    $stmt = $db->prepare("UPDATE users SET nama=?, kecamatan=?, kelurahan=?, alamat=? WHERE id=?");
-    $stmt->execute([$nama, $kecamatan, $kelurahan, $alamat, $id]);
+    $stmt = $db->prepare("UPDATE users SET nama=?, kecamatan=?, kelurahan=?, alamat=? WHERE hp=?");
+    $stmt->execute([$nama, $kecamatan, $kelurahan, $alamat, $hp]);
 
-    $_SESSION['user'] = array_merge($_SESSION['user'], compact('nama','kecamatan','kelurahan','alamat'));
-    jsonResponse(true, 'Profil diperbarui', ['user' => $_SESSION['user']]);
+    $stmt2 = $db->prepare("SELECT * FROM users WHERE hp=?");
+    $stmt2->execute([$hp]);
+    $user = $stmt2->fetch();
+
+    jsonResponse(true, 'Profil diperbarui', ['user' => $user]);
 }
 
 // ===== LOGOUT =====
