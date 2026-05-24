@@ -360,89 +360,80 @@
     <div class="stepper" id="stepperSection">
       <div class="stepper-title">Perjalanan Pesanan</div>
       <div class="steps" id="stepsContainer">
-        <div class="steps-progress" id="stepsProgress" style="width:0%"></div>
+  <div class="steps-progress" id="stepsProgress" style="width:0%"></div>
 
-        <div class="step-item" id="step1">
-          <div class="step-dot">📋</div>
-          <div class="step-label">Menunggu Konfirmasi</div>
-        </div>
-        <div class="step-item" id="step2">
-          <div class="step-dot">📦</div>
-          <div class="step-label">Sedang Dikemas</div>
-        </div>
-        <div class="step-item" id="step3">
-          <div class="step-dot">🚚</div>
-          <div class="step-label">Dalam Perjalanan</div>
-        </div>
-        <div class="step-item" id="step4">
-          <div class="step-dot">✅</div>
-          <div class="step-label">Telah Tiba</div>
-        </div>
-      </div>
+  <div class="step-item" id="step1">
+    <div class="step-dot">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    </div>
+    <div class="step-label">Menunggu Konfirmasi</div>
+  </div>
+
+  <div class="step-item" id="step2">
+    <div class="step-dot">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
+    </div>
+    <div class="step-label">Sedang Dikemas</div>
+  </div>
+
+  <div class="step-item" id="step3">
+    <div class="step-dot">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+    </div>
+    <div class="step-label">Dalam Perjalanan</div>
+  </div>
+
+  <div class="step-item" id="step4">
+    <div class="step-dot">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <div class="step-label">Telah Tiba</div>
+  </div>
+</div>
     </div>
 
     <!-- Detail Produk -->
-    <div class="detail-section">
-      <div class="detail-section-title">📦 Detail Produk</div>
-      <div class="detail-row">
-        <span>Produk</span>
-        <strong id="dProduk">-</strong>
-      </div>
-      <div class="detail-row">
-        <span>Jumlah</span>
-        <strong id="dQty">-</strong>
-      </div>
-      <div class="detail-row">
-        <span>Harga Barang</span>
-        <strong id="dHarga">-</strong>
-      </div>
-      <div class="detail-row">
-        <span>Ongkir</span>
-        <strong id="dOngkir">-</strong>
-      </div>
-      <div class="total-row">
-        <span>Total Bayar</span>
-        <span id="dTotal">-</span>
-      </div>
-    </div>
+<div class="detail-section">
+  <div class="detail-section-title">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#2d6a2d" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+    </svg>
+    Detail Produk
+  </div>
+  <div class="detail-row"><span>Produk</span><strong id="dProduk">-</strong></div>
+  <div class="detail-row"><span>Jumlah</span><strong id="dQty">-</strong></div>
+  <div class="detail-row"><span>Harga Barang</span><strong id="dHarga">-</strong></div>
+  <div class="detail-row"><span>Ongkir</span><strong id="dOngkir">-</strong></div>
+  <div class="total-row"><span>Total Bayar</span><span id="dTotal">-</span></div>
+</div>
 
-    <!-- Detail Pengiriman -->
-    <div class="detail-section">
-      <div class="detail-section-title">📍 Alamat Pengiriman</div>
-      <div class="detail-row">
-        <span>Nama</span>
-        <strong id="dNama">-</strong>
-      </div>
-      <div class="detail-row">
-        <span>Nomor HP</span>
-        <strong id="dHp">-</strong>
-      </div>
-      <div class="detail-row">
-        <span>Kecamatan</span>
-        <strong id="dKec">-</strong>
-      </div>
-      <div class="detail-row">
-        <span>Kelurahan</span>
-        <strong id="dKel">-</strong>
-      </div>
-      <div class="detail-row">
-        <span>Alamat</span>
-        <strong id="dAlamat">-</strong>
-      </div>
-    </div>
+<!-- Detail Pengiriman -->
+<div class="detail-section">
+  <div class="detail-section-title">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#2d6a2d" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+    </svg>
+    Alamat Pengiriman
+  </div>
+  <div class="detail-row"><span>Nama</span><strong id="dNama">-</strong></div>
+  <div class="detail-row"><span>Nomor HP</span><strong id="dHp">-</strong></div>
+  <div class="detail-row"><span>Kecamatan</span><strong id="dKec">-</strong></div>
+  <div class="detail-row"><span>Kelurahan</span><strong id="dKel">-</strong></div>
+  <div class="detail-row"><span>Alamat</span><strong id="dAlamat">-</strong></div>
+</div>
 
-    <!-- Detail Pembayaran -->
-    <div class="detail-section">
-      <div class="detail-section-title">💳 Pembayaran</div>
-      <div class="detail-row">
-        <span>Metode</span>
-        <strong id="dMetode">-</strong>
-      </div>
-      <div class="detail-row">
-        <span>Tanggal Pesan</span>
-        <strong id="dTanggal">-</strong>
-      </div>
-    </div>
+<!-- Detail Pembayaran -->
+<div class="detail-section">
+  <div class="detail-section-title">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#2d6a2d" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+    </svg>
+    Pembayaran
+  </div>
+  <div class="detail-row"><span>Metode</span><strong id="dMetode">-</strong></div>
+  <div class="detail-row"><span>Tanggal Pesan</span><strong id="dTanggal">-</strong></div>
+</div>
 
     <!-- Info box -->
     <div class="detail-section">
@@ -458,10 +449,9 @@
 </div>
 
 <script>
-const API_STATUS = 'https://bumi-kelapa-production-2a25.up.railway.app/api_status.php';// Sesuaikan path jika perlu
+const API_STATUS = 'https://bumi-kelapa-production-2a25.up.railway.app/api_status.php';
 
-const stepIcons  = ['📋','📦','🚚','✅'];
-const stepWidths = ['12%','37%','62%','88%']; // posisi progress bar per step
+const stepWidths = ['12%','37%','62%','88%'];
 
 function rupiahFormat(n) {
   return 'Rp ' + parseInt(n).toLocaleString('id-ID');
@@ -518,13 +508,19 @@ async function cariPesanan() {
 }
 
 function tampilkanHasil(p) {
-  const step  = parseInt(p.status_step) || 1;
+  const step = parseInt(p.status_step) || 1;
   const isCancelled = p.status === 'dibatalkan';
 
   // Banner
   document.getElementById('statusBanner').style.background = p.status_warna;
-  document.getElementById('sbId').textContent    = `#${p.id}`;
-  document.getElementById('sbIcon').textContent  = isCancelled ? '❌' : stepIcons[step - 1] || '📋';
+  document.getElementById('sbId').textContent    = '#' + p.id;
+  document.getElementById('sbIcon').innerHTML    = isCancelled
+    ? '<svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>'
+    : ['<svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>',
+       '<svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>',
+       '<svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>',
+       '<svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>'
+      ][step - 1] || '';
   document.getElementById('sbLabel').textContent = p.status_label;
   document.getElementById('sbDesc').textContent  = p.status_desc;
 
@@ -535,9 +531,9 @@ function tampilkanHasil(p) {
     document.getElementById('stepperSection').style.display = 'block';
     document.getElementById('stepsProgress').style.width = stepWidths[step - 1] || '12%';
     for (let i = 1; i <= 4; i++) {
-      const el = document.getElementById(`step${i}`);
+      const el = document.getElementById('step' + i);
       el.classList.remove('done','active','cancelled');
-      if (i < step)       el.classList.add('done');
+      if (i < step)        el.classList.add('done');
       else if (i === step) el.classList.add('active');
     }
   }
@@ -558,18 +554,18 @@ function tampilkanHasil(p) {
 
   // Pembayaran
   let metodeLabel = p.metode_pembayaran;
-  if (p.bank)    metodeLabel += ` — ${p.bank}`;
-  if (p.ewallet) metodeLabel += ` (${p.ewallet})`;
+  if (p.bank)    metodeLabel += ' — ' + p.bank;
+  if (p.ewallet) metodeLabel += ' (' + p.ewallet + ')';
   document.getElementById('dMetode').textContent  = metodeLabel || '-';
   document.getElementById('dTanggal').textContent = tanggalFormat(p.tanggal);
 
   // Info box
   const infoMap = {
-    'menunggu_konfirmasi': '⏳ Pesanan Anda sedang ditinjau. Penjual akan segera mengkonfirmasi pesanan Anda.',
-    'diproses':            '📦 Pesanan sedang dikemas dengan hati-hati. Segera dikirim!',
-    'dikirim':             '🚚 Pesanan dalam perjalanan! Harap siapkan penerima di alamat tujuan.',
-    'tiba':                '🎉 Pesanan sudah tiba! Terima kasih telah berbelanja di Bumi Kelapa.',
-    'dibatalkan':          '❌ Pesanan ini dibatalkan. Hubungi kami jika ada pertanyaan.'
+    'menunggu_konfirmasi': 'Pesanan Anda sedang ditinjau. Penjual akan segera mengkonfirmasi pesanan Anda.',
+    'diproses':            'Pesanan sedang dikemas dengan hati-hati. Segera dikirim!',
+    'dikirim':             'Pesanan dalam perjalanan! Harap siapkan penerima di alamat tujuan.',
+    'tiba':                'Pesanan sudah tiba! Terima kasih telah berbelanja di Bumi Kelapa.',
+    'dibatalkan':          'Pesanan ini dibatalkan. Hubungi kami jika ada pertanyaan.'
   };
   document.getElementById('infoBox').textContent = infoMap[p.status] || '';
 
@@ -588,12 +584,10 @@ function resetForm() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Enter key support
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') cariPesanan();
 });
 
-// Auto-isi dari URL (setelah redirect dari produk.html)
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
@@ -605,6 +599,3 @@ window.addEventListener('load', () => {
   }
 });
 </script>
-
-</body>
-</html>
