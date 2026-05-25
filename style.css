@@ -1532,7 +1532,9 @@ body {
   }
 }
 
-.tentang-hero p {
-    margin-bottom: 16px;
-    line-height: 1.8;
+
+.tentang-hero {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
