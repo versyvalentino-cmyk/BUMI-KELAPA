@@ -237,5 +237,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var nav = document.querySelector('nav');
+    if (nav) {
+        nav.style.cssText += '; display:flex !important; visibility:visible !important; opacity:1 !important; height:auto !important; overflow-x:auto !important; background:white !important; border-bottom:1px solid #ddd !important; padding:12px 0 !important; gap:8px !important; justify-content:flex-start !important; flex-wrap:nowrap !important;';
+    }
+    var links = document.querySelectorAll('nav a');
+    links.forEach(function(a) {
+        a.style.cssText += '; display:inline-block !important; visibility:visible !important; flex-shrink:0 !important; padding:10px 14px !important; color:#333 !important;';
+    });
+});
+</script>
+
 </body>
 </html>
