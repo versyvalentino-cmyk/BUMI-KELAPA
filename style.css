@@ -1531,3 +1531,8 @@ body {
     transform: translateX(0) scale(1);
   }
 }
+
+.tentang-hero p {
+    margin-bottom: 16px;
+    line-height: 1.8;
+}
