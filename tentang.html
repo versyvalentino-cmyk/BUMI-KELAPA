@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
 
 <style>
-/* ===== NAVBAR BUMI KELAPA ===== */
+/* ===== NAVBAR ===== */
 nav {
     background: #ffffff !important;
     border-bottom: 3px solid #2d6a2d !important;
@@ -51,12 +51,12 @@ nav a.active {
     font-weight: 900 !important;
 }
 
-/* ===== TENTANG HERO - FULL WIDTH FIX ===== */
+/* ===== TENTANG HERO ===== */
 body.tentang .tentang-wrapper,
 body.tentang div.tentang-wrapper {
     width: 100% !important;
     max-width: 100% !important;
-    padding: 0 !important;
+    padding: 40px 0 !important;
     margin: 0 !important;
     box-sizing: border-box !important;
 }
@@ -64,10 +64,10 @@ body.tentang div.tentang-wrapper {
 body.tentang .tentang-hero,
 body.tentang div.tentang-hero {
     width: 100% !important;
-    max-width: 100% !important;
+    max-width: 900px !important;
     box-sizing: border-box !important;
-    padding: 40px 60px !important;
-    margin: 0 !important;
+    padding: 40px 50px !important;
+    margin: 0 auto !important;
 }
 
 body.tentang .tentang-hero h2 {
@@ -84,12 +84,15 @@ body.tentang div.tentang-hero p {
     box-sizing: border-box !important;
 }
 
-/* Lokasi section */
+/* ===== LOKASI ===== */
 body.tentang .lokasi-section {
-    padding: 30px 60px !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    padding: 30px 50px !important;
     box-sizing: border-box !important;
 }
 
+/* ===== MOBILE ===== */
 @media (max-width: 768px) {
     nav {
         justify-content: flex-start !important;
@@ -98,7 +101,7 @@ body.tentang .lokasi-section {
     }
     nav::-webkit-scrollbar { display: none !important; }
     nav a {
-        padding: 14px 20px !important;
+        padding: 12px 16px !important;
         font-size: 12px !important;
         flex-shrink: 0 !important;
     }
@@ -159,7 +162,7 @@ body.tentang .lokasi-section {
 
   <!-- Lokasi -->
   <div class="lokasi-section">
-    <h3>📍 Lokasi Kami</h3>
+    <h3>🏠︎ Lokasi Kami</h3>
     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1524.0374676555184!2d128.12736059358645!3d-3.77553989970134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2d6cdd0003339acb%3A0xdb55724ad7cd120b!2sBUMI%20KELAPA!5e1!3m2!1sid!2sid!4v1775735124738!5m2!1sid!2sid" 
      width="100%" height="450" style="border:0; border-radius:12px;" allowfullscreen="" loading="lazy"></iframe>
   </div>
@@ -173,20 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
         nav.style.setProperty('display', 'flex', 'important');
         nav.style.setProperty('visibility', 'visible', 'important');
         nav.style.setProperty('opacity', '1', 'important');
-    }
-
-    // Force full width pada tentang-hero
-    var hero = document.querySelector('.tentang-hero');
-    if (hero) {
-        hero.style.setProperty('width', '100%', 'important');
-        hero.style.setProperty('max-width', '100%', 'important');
-        hero.style.setProperty('box-sizing', 'border-box', 'important');
-    }
-    var wrapper = document.querySelector('.tentang-wrapper');
-    if (wrapper) {
-        wrapper.style.setProperty('width', '100%', 'important');
-        wrapper.style.setProperty('max-width', '100%', 'important');
-        wrapper.style.setProperty('padding', '0', 'important');
     }
 });
 </script>
