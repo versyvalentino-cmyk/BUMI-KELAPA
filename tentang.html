@@ -7,53 +7,7 @@
     <link rel="stylesheet" href="style.css">
 
 <style>
-/* ===== NAVBAR LAPTOP ===== */
-@media (min-width: 769px) {
-  nav {
-      background: #ffffff !important;
-      border-bottom: 3px solid #2d6a2d !important;
-      border-top: none !important;
-      padding: 0 !important;
-      display: flex !important;
-      justify-content: center !important;
-      gap: 0 !important;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.07) !important;
-      z-index: 9999 !important;
-      position: relative !important;
-      width: 100% !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      height: auto !important;
-      flex-wrap: wrap !important;
-  }
-  nav a {
-      display: inline-block !important;
-      padding: 14px 32px !important;
-      color: #333333 !important;
-      text-decoration: none !important;
-      font-weight: 900 !important;
-      font-size: 13px !important;
-      letter-spacing: 0.1em !important;
-      text-transform: uppercase !important;
-      border-bottom: 3px solid transparent !important;
-      margin-bottom: -3px !important;
-      transition: color 0.2s, border-color 0.2s !important;
-      visibility: visible !important;
-  }
-  nav a:hover {
-      color: #2d6a2d !important;
-      border-bottom-color: #2d6a2d !important;
-      background: transparent !important;
-  }
-  nav a.active {
-      color: #2d6a2d !important;
-      border-bottom-color: #2d6a2d !important;
-      background: transparent !important;
-      font-weight: 900 !important;
-  }
-}
-
-/* ===== TENTANG HERO ===== */
+/* ===== TENTANG HERO - LAPTOP ===== */
 body.tentang .tentang-wrapper,
 body.tentang div.tentang-wrapper {
     width: 100% !important;
@@ -114,20 +68,14 @@ body.tentang .lokasi-section {
     border-bottom: 1px solid #ddd !important;
     padding: 12px 0 !important;
     overflow-x: auto !important;
-    white-space: nowrap !important;
+    white-space: nowrap;
     display: flex !important;
     gap: 8px !important;
-    scrollbar-width: none !important;
-    justify-content: flex-start !important;
-    flex-wrap: nowrap !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    height: auto !important;
-    box-shadow: none !important;
+    scrollbar-width: none;
   }
 
   nav::-webkit-scrollbar {
-    display: none !important;
+    display: none;
   }
 
   nav a {
@@ -136,14 +84,8 @@ body.tentang .lokasi-section {
     font-size: 13.5px !important;
     color: #333 !important;
     text-decoration: none !important;
-    font-weight: 500 !important;
-    border-radius: 8px !important;
-    text-transform: none !important;
-    letter-spacing: 0 !important;
-    border-bottom: none !important;
-    margin-bottom: 0 !important;
-    display: inline-block !important;
-    visibility: visible !important;
+    font-weight: 500;
+    border-radius: 8px;
   }
 
   nav a.active {
@@ -228,7 +170,6 @@ body.tentang .lokasi-section {
   <a href="kontak.html">Kontak</a>
 </nav>
 
-
 <div class="tentang-wrapper">
 
   <div class="tentang-hero">
@@ -252,23 +193,12 @@ body.tentang .lokasi-section {
 
   <!-- Lokasi -->
   <div class="lokasi-section">
-    <h3>🏠︎ Lokasi Kami</h3>
+    <h3>📍 Lokasi Kami</h3>
     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1524.0374676555184!2d128.12736059358645!3d-3.77553989970134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2d6cdd0003339acb%3A0xdb55724ad7cd120b!2sBUMI%20KELAPA!5e1!3m2!1sid!2sid!4v1775735124738!5m2!1sid!2sid" 
      width="100%" height="450" style="border:0; border-radius:12px;" allowfullscreen="" loading="lazy"></iframe>
   </div>
 
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var nav = document.querySelector('nav');
-    if (nav) {
-        nav.style.setProperty('display', 'flex', 'important');
-        nav.style.setProperty('visibility', 'visible', 'important');
-        nav.style.setProperty('opacity', '1', 'important');
-    }
-});
-</script>
 
 </body>
 </html>
