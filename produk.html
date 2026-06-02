@@ -900,6 +900,7 @@
 const API_PESAN = 'https://bumi-kelapa-production-2a25.up.railway.app/Pesan.php';
 const API_CHAT  = 'https://bumi-kelapa-production-2a25.up.railway.app/chat.php';
 const API_STATUS = 'status.html';
+const API_KERANJANG = 'https://bumi-kelapa-production-2a25.up.railway.app/keranjang.php';
 // ============================================================
 // ★★★ SISTEM CHAT DENGAN CHATBOT ★★★
 // ============================================================
@@ -1226,14 +1227,55 @@ const dataWilayah = {
 };
 
 // Ambil keranjang dari localStorage saat halaman dibuka
-let keranjang = JSON.parse(localStorage.getItem('bk_keranjang') || '[]');
-updateJumlahKeranjang();
+
+let keranjang = [];
+const userHP = JSON.parse(localStorage.getItem('bk_user') || 'null')?.hp || '';
+
+async function muatKeranjangServer() {
+  if (!userHP) {
+    keranjang = JSON.parse(localStorage.getItem('bk_keranjang') || '[]');
+    updateJumlahKeranjang();
+    return;
+  }
+  try {
+    const res = await fetch(`${API_KERANJANG}?aksi=ambil&hp=${encodeURIComponent(userHP)}`);
+    const data = await res.json();
+    if (data.sukses) {
+      keranjang = data.keranjang.map(k => ({
+        nama: k.nama_produk, harga: parseInt(k.harga), qty: parseInt(k.qty), jenis: k.jenis
+      }));
+      updateJumlahKeranjang();
+    }
+  } catch(e) {}
+}
+muatKeranjangServer();
+
 let produkAktif={nama:'',harga:0,qty:1,jenis:'kelapa'};
 let ongkirAktif=0,kendaraanAktif='',metodeTerpilih=null,ewalletTerpilih=null,bankTerpilih=null;
 
 function tambah(btn){const q=btn.parentElement.querySelector('.qty');q.textContent=parseInt(q.textContent)+1;}
 function kurang(btn){const q=btn.parentElement.querySelector('.qty');if(parseInt(q.textContent)>1)q.textContent=parseInt(q.textContent)-1;}
-function tambahKeranjang(nama,harga,btn){const qty=parseInt(btn.closest('.card').querySelector('.qty').textContent);const idx=keranjang.findIndex(k=>k.nama===nama);if(idx>=0)keranjang[idx].qty+=qty;else keranjang.push({nama,harga,qty});localStorage.setItem('bk_keranjang',JSON.stringify(keranjang));updateJumlahKeranjang();alert(`${qty}x ${nama} ditambahkan ke keranjang!`);}
+async function tambahKeranjang(nama, harga, btn) {
+  const qty = parseInt(btn.closest('.card').querySelector('.qty').textContent);
+  // Update lokal dulu
+  const idx = keranjang.findIndex(k => k.nama === nama);
+  if (idx >= 0) keranjang[idx].qty += qty;
+  else keranjang.push({ nama, harga, qty });
+  updateJumlahKeranjang();
+  alert(`${qty}x ${nama} ditambahkan ke keranjang!`);
+  // Simpan ke server jika login
+  if (userHP) {
+    try {
+      await fetch(API_KERANJANG, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aksi: 'tambah', hp: userHP, nama_produk: nama, harga, qty })
+      });
+    } catch(e) {}
+  } else {
+    localStorage.setItem('bk_keranjang', JSON.stringify(keranjang));
+  }
+}
 function updateJumlahKeranjang(){document.getElementById('jumlahKeranjang').textContent=keranjang.reduce((a,b)=>a+b.qty,0);}
 function bukaKeranjang() {
   const el = document.getElementById('isiKeranjang');
@@ -1263,7 +1305,23 @@ function bukaKeranjang() {
   }
   document.getElementById('popupKeranjang').classList.add('aktif');
 }
-function hapusItem(index){keranjang.splice(index,1);localStorage.setItem('bk_keranjang',JSON.stringify(keranjang));updateJumlahKeranjang();bukaKeranjang();}
+async function hapusItem(index) {
+  const item = keranjang[index];
+  keranjang.splice(index, 1);
+  updateJumlahKeranjang();
+  bukaKeranjang();
+  if (userHP) {
+    try {
+      await fetch(API_KERANJANG, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aksi: 'hapus', hp: userHP, nama_produk: item.nama })
+      });
+    } catch(e) {}
+  } else {
+    localStorage.setItem('bk_keranjang', JSON.stringify(keranjang));
+  }
+}
 function tutupKeranjang(){document.getElementById('popupKeranjang').classList.remove('aktif');}
 function checkout(){if(!keranjang.length)return;tutupKeranjang();produkAktif={nama:keranjang.map(k=>`${k.nama} x${k.qty}`).join(', '),harga:keranjang.reduce((a,b)=>a+b.harga*b.qty,0),qty:1,jenis:'kelapa'};bukaFormData();}
 function bukaFormPesananPaket(nama,harga,btn){const qty=parseInt(btn.closest('.card').querySelector('.qty').textContent);produkAktif={nama:nama+' ('+qty+' karung / '+(qty*100)+' buah)',harga,qty,jenis:'paket'};BATAS_MOTOR['paket']=0;bukaFormData();}
@@ -1277,7 +1335,17 @@ function ambilLokasi(){if(!navigator.geolocation)return alert('Browser tidak men
 function lanjutKePembayaran(){const nama=document.getElementById('namaPembeli').value.trim();const hp=document.getElementById('hpPembeli').value.trim();const kec=document.getElementById('kecamatan').value;const kel=document.getElementById('kelurahan').value;const alamat=document.getElementById('alamatDetail').value.trim();const jumlah=parseInt(document.getElementById('jumlahProduk').value)||0;if(!nama||!hp||!kec||!kel||!alamat)return alert('Lengkapi semua data terlebih dahulu!');if(jumlah<=0)return alert('Masukkan jumlah produk yang dipesan!');if(ongkirAktif===0&&kec!=='')return alert('Pilih kelurahan tujuan agar ongkir bisa dihitung!');const hargaBarang=produkAktif.harga*produkAktif.qty;const total=hargaBarang+ongkirAktif;const labelOngkir=kendaraanAktif==='pickup'?'Ongkir (Mobil Pickup)':'Ongkir (Motor)';document.getElementById('pmItemName').textContent=produkAktif.nama+(produkAktif.qty>1?` x${produkAktif.qty}`:'');document.getElementById('pmItemPrice').textContent='Rp '+hargaBarang.toLocaleString('id-ID');document.getElementById('pmLabelOngkir').textContent=labelOngkir;document.getElementById('pmOngkir').textContent='Rp '+ongkirAktif.toLocaleString('id-ID');document.getElementById('pmTotal').textContent='Rp '+total.toLocaleString('id-ID');tutupLogin();resetPembayaran();document.getElementById('popupPembayaran').classList.add('aktif');}
 function pilihMetode(tipe,sub,el){document.querySelectorAll('#popupPembayaran .pm-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');metodeTerpilih=tipe;ewalletTerpilih=(tipe==='ewallet')?sub:null;bankTerpilih=null;document.querySelectorAll('.pm-detail').forEach(d=>d.classList.remove('open'));document.getElementById('suksesBox').classList.remove('open');const labelMap={ewallet:sub.charAt(0).toUpperCase()+sub.slice(1),qris:'QRIS',transfer:'Transfer Bank',cod:'COD'};if(tipe==='transfer'){document.getElementById('detail-transfer').classList.add('open');document.getElementById('btnBayar').disabled=true;document.getElementById('btnBayar').textContent='Pilih Bank Tujuan';}else if(tipe==='qris'){document.getElementById('detail-qris').classList.add('open');document.getElementById('btnBayar').disabled=false;document.getElementById('btnBayar').textContent='Pesan dengan QRIS';}else{document.getElementById('btnBayar').disabled=false;document.getElementById('btnBayar').textContent=`Pesan — Bayar via ${labelMap[tipe]}`;}}
 function pilihBank(el,nama,norek){document.querySelectorAll('#detail-transfer .sub-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');bankTerpilih={nama,norek};document.getElementById('btnBayar').disabled=false;document.getElementById('btnBayar').textContent=`Pesan — Transfer ke ${nama}`;}
-async function prosesPesanan(){if(!metodeTerpilih)return;if(metodeTerpilih==='transfer'&&!bankTerpilih){alert('Pilih bank tujuan transfer terlebih dahulu.');return;}const nama=document.getElementById('namaPembeli').value.trim();const hp=document.getElementById('hpPembeli').value.trim();const kec=document.getElementById('kecamatan').value;const kel=document.getElementById('kelurahan').value;const alamat=document.getElementById('alamatDetail').value.trim();const harga=produkAktif.harga*produkAktif.qty;const total=harga+ongkirAktif;const btn=document.getElementById('btnBayar');const origText=btn.textContent;btn.disabled=true;btn.innerHTML='Menyimpan Pesanan... <span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-left:6px"></span>';const payload={nama,hp,kecamatan:kec,kelurahan:kel,alamat,nama_produk:produkAktif.nama,jenis_produk:produkAktif.jenis,total_qty:produkAktif.qty,kendaraan:kendaraanAktif,harga_barang:harga,ongkir:ongkirAktif,total_bayar:total,metode_pembayaran:metodeTerpilih,bank:bankTerpilih?bankTerpilih.nama:'',ewallet:ewalletTerpilih||''};try{const res=await fetch(API_PESAN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await res.json();btn.disabled=false;btn.textContent=origText;if(!data.sukses){alert('Gagal menyimpan pesanan: '+(data.pesan||'Coba lagi.'));return;}const idPesanan=data.id_pesanan;document.getElementById('skIdNum').textContent='#'+idPesanan;document.getElementById('skIdHp').textContent='HP: '+hp;document.getElementById('trackBtn').href=`${API_STATUS}?id=${idPesanan}&hp=${encodeURIComponent(hp)}`;document.querySelectorAll('#popupPembayaran .pm-section-title,#popupPembayaran .pm-option,#popupPembayaran .pm-detail,#popupPembayaran .pm-summary').forEach(el=>el.style.display='none');document.getElementById('btnBayar').style.display='none';document.querySelector('.pm-btn-cancel').style.display='none';document.getElementById('suksesBox').classList.add('open');document.getElementById('suksesBox').scrollIntoView({behavior:'smooth',block:'start'});keranjang=[];updateJumlahKeranjang();}catch(err){btn.disabled=false;btn.textContent=origText;alert('Gagal menghubungi server.');}}
+async function prosesPesanan(){if(!metodeTerpilih)return;if(metodeTerpilih==='transfer'&&!bankTerpilih){alert('Pilih bank tujuan transfer terlebih dahulu.');return;}const nama=document.getElementById('namaPembeli').value.trim();const hp=document.getElementById('hpPembeli').value.trim();const kec=document.getElementById('kecamatan').value;const kel=document.getElementById('kelurahan').value;const alamat=document.getElementById('alamatDetail').value.trim();const harga=produkAktif.harga*produkAktif.qty;const total=harga+ongkirAktif;const btn=document.getElementById('btnBayar');const origText=btn.textContent;btn.disabled=true;btn.innerHTML='Menyimpan Pesanan... <span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-left:6px"></span>';const payload={nama,hp,kecamatan:kec,kelurahan:kel,alamat,nama_produk:produkAktif.nama,jenis_produk:produkAktif.jenis,total_qty:produkAktif.qty,kendaraan:kendaraanAktif,harga_barang:harga,ongkir:ongkirAktif,total_bayar:total,metode_pembayaran:metodeTerpilih,bank:bankTerpilih?bankTerpilih.nama:'',ewallet:ewalletTerpilih||''};try{const res=await fetch(API_PESAN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await res.json();btn.disabled=false;btn.textContent=origText;if(!data.sukses){alert('Gagal menyimpan pesanan: '+(data.pesan||'Coba lagi.'));return;}const idPesanan=data.id_pesanan;document.getElementById('skIdNum').textContent='#'+idPesanan;document.getElementById('skIdHp').textContent='HP: '+hp;document.getElementById('trackBtn').href=`${API_STATUS}?id=${idPesanan}&hp=${encodeURIComponent(hp)}`;document.querySelectorAll('#popupPembayaran .pm-section-title,#popupPembayaran .pm-option,#popupPembayaran .pm-detail,#popupPembayaran .pm-summary').forEach(el=>el.style.display='none');document.getElementById('btnBayar').style.display='none';document.querySelector('.pm-btn-cancel').style.display='none';document.getElementById('suksesBox').classList.add('open');document.getElementById('suksesBox').scrollIntoView({behavior:'smooth',block:'start'});keranjang = [];
+updateJumlahKeranjang();
+if (userHP) {
+  fetch(API_KERANJANG, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ aksi: 'kosongkan', hp: userHP })
+  });
+} else {
+  localStorage.removeItem('bk_keranjang');
+}}catch(err){btn.disabled=false;btn.textContent=origText;alert('Gagal menghubungi server.');}}
 function selesaiBelanja(){tutupPembayaran();}
 function tutupPembayaran(){document.getElementById('popupPembayaran').classList.remove('aktif');resetPembayaran();}
 function resetPembayaran(){metodeTerpilih=null;ewalletTerpilih=null;bankTerpilih=null;document.querySelectorAll('#popupPembayaran .pm-option').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('.pm-detail').forEach(d=>d.classList.remove('open'));document.getElementById('suksesBox').classList.remove('open');document.querySelectorAll('#popupPembayaran .pm-section-title,#popupPembayaran .pm-option,#popupPembayaran .pm-summary').forEach(el=>el.style.display='');document.getElementById('btnBayar').style.display='';document.getElementById('btnBayar').disabled=true;document.getElementById('btnBayar').textContent='Pilih Metode Pembayaran';document.querySelector('.pm-btn-cancel').style.display='';}
