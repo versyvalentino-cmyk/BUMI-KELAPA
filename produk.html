@@ -1229,16 +1229,21 @@ const dataWilayah = {
 // Ambil keranjang dari localStorage saat halaman dibuka
 
 let keranjang = [];
-const userHP = JSON.parse(localStorage.getItem('bk_user') || 'null')?.hp || '';
+function getUserHP() {
+  try {
+    const u = localStorage.getItem('bk_user');
+    return u ? JSON.parse(u).hp || '' : '';
+  } catch(e) { return ''; }
+}
 
 async function muatKeranjangServer() {
-  if (!userHP) {
+  if (!getUserHP()) {
     keranjang = JSON.parse(localStorage.getItem('bk_keranjang') || '[]');
     updateJumlahKeranjang();
     return;
   }
   try {
-    const res = await fetch(`${API_KERANJANG}?aksi=ambil&hp=${encodeURIComponent(userHP)}`);
+    const res = await fetch(`${API_KERANJANG}?aksi=ambil&hp=${encodeURIComponent(getUserHP())}`);
     const data = await res.json();
     if (data.sukses) {
       keranjang = data.keranjang.map(k => ({
@@ -1264,12 +1269,12 @@ async function tambahKeranjang(nama, harga, btn) {
   updateJumlahKeranjang();
   alert(`${qty}x ${nama} ditambahkan ke keranjang!`);
   // Simpan ke server jika login
-  if (userHP) {
+ if (getUserHP()) {
     try {
       await fetch(API_KERANJANG, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aksi: 'tambah', hp: userHP, nama_produk: nama, harga, qty })
+        body: JSON.stringify({ aksi: 'tambah', hp: getUserHP(), nama_produk: nama, harga, qty })
       });
     } catch(e) {}
   } else {
@@ -1310,12 +1315,12 @@ async function hapusItem(index) {
   keranjang.splice(index, 1);
   updateJumlahKeranjang();
   bukaKeranjang();
-  if (userHP) {
+  if (getUserHP()) {
     try {
       await fetch(API_KERANJANG, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aksi: 'hapus', hp: userHP, nama_produk: item.nama })
+        body: JSON.stringify({ aksi: 'hapus', hp: getUserHP(), nama_produk: item.nama })
       });
     } catch(e) {}
   } else {
@@ -1337,11 +1342,11 @@ function pilihMetode(tipe,sub,el){document.querySelectorAll('#popupPembayaran .p
 function pilihBank(el,nama,norek){document.querySelectorAll('#detail-transfer .sub-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');bankTerpilih={nama,norek};document.getElementById('btnBayar').disabled=false;document.getElementById('btnBayar').textContent=`Pesan — Transfer ke ${nama}`;}
 async function prosesPesanan(){if(!metodeTerpilih)return;if(metodeTerpilih==='transfer'&&!bankTerpilih){alert('Pilih bank tujuan transfer terlebih dahulu.');return;}const nama=document.getElementById('namaPembeli').value.trim();const hp=document.getElementById('hpPembeli').value.trim();const kec=document.getElementById('kecamatan').value;const kel=document.getElementById('kelurahan').value;const alamat=document.getElementById('alamatDetail').value.trim();const harga=produkAktif.harga*produkAktif.qty;const total=harga+ongkirAktif;const btn=document.getElementById('btnBayar');const origText=btn.textContent;btn.disabled=true;btn.innerHTML='Menyimpan Pesanan... <span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-left:6px"></span>';const payload={nama,hp,kecamatan:kec,kelurahan:kel,alamat,nama_produk:produkAktif.nama,jenis_produk:produkAktif.jenis,total_qty:produkAktif.qty,kendaraan:kendaraanAktif,harga_barang:harga,ongkir:ongkirAktif,total_bayar:total,metode_pembayaran:metodeTerpilih,bank:bankTerpilih?bankTerpilih.nama:'',ewallet:ewalletTerpilih||''};try{const res=await fetch(API_PESAN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await res.json();btn.disabled=false;btn.textContent=origText;if(!data.sukses){alert('Gagal menyimpan pesanan: '+(data.pesan||'Coba lagi.'));return;}const idPesanan=data.id_pesanan;document.getElementById('skIdNum').textContent='#'+idPesanan;document.getElementById('skIdHp').textContent='HP: '+hp;document.getElementById('trackBtn').href=`${API_STATUS}?id=${idPesanan}&hp=${encodeURIComponent(hp)}`;document.querySelectorAll('#popupPembayaran .pm-section-title,#popupPembayaran .pm-option,#popupPembayaran .pm-detail,#popupPembayaran .pm-summary').forEach(el=>el.style.display='none');document.getElementById('btnBayar').style.display='none';document.querySelector('.pm-btn-cancel').style.display='none';document.getElementById('suksesBox').classList.add('open');document.getElementById('suksesBox').scrollIntoView({behavior:'smooth',block:'start'});keranjang = [];
 updateJumlahKeranjang();
-if (userHP) {
+if (getUserHP()) {
   fetch(API_KERANJANG, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ aksi: 'kosongkan', hp: userHP })
+    body: JSON.stringify({ aksi: 'kosongkan', hp: getUserHP() })
   });
 } else {
   localStorage.removeItem('bk_keranjang');
