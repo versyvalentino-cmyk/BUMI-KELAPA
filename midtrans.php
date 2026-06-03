@@ -2,8 +2,8 @@
 require_once 'Config.php';
 header('Content-Type: application/json; charset=utf-8');
 
-define('MIDTRANS_SERVER_KEY', 'Mid-server-5zumy491U7K5CMcQ9v17wtc-');
-define('MIDTRANS_CLIENT_KEY', 'Mid-client-1J4MFoLd6xMkttD_');
+define('MIDTRANS_SERVER_KEY', 'ISI_SERVER_KEY_DISINI');
+define('MIDTRANS_CLIENT_KEY', 'ISI_CLIENT_KEY_DISINI');
 define('MIDTRANS_IS_PRODUCTION', false); // false = sandbox, true = production
 
 $input = json_decode(file_get_contents('php://input'), true) ?: [];
