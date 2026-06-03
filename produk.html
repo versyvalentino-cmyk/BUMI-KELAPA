@@ -1234,11 +1234,28 @@ const dataWilayah = {
 
 
 let keranjang = [];
+
 function getUserHP() {
   try {
     const u = localStorage.getItem('bk_user');
     return u ? JSON.parse(u).hp || '' : '';
   } catch(e) { return ''; }
+}
+
+async function sinkronKeranjangSaatLogin() {
+  if (!getUserHP()) return;
+  const lokal = JSON.parse(localStorage.getItem('bk_keranjang') || '[]');
+  if (lokal.length === 0) return;
+  try {
+    for (const k of lokal) {
+      await fetch(API_KERANJANG, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aksi: 'tambah', hp: getUserHP(), nama_produk: k.nama, harga: k.harga, qty: k.qty, jenis: k.jenis || 'kelapa' })
+      });
+    }
+    localStorage.removeItem('bk_keranjang');
+  } catch(e) {}
 }
 
 async function muatKeranjangServer() {
