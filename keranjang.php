@@ -8,7 +8,7 @@ $db->exec("
   CREATE TABLE IF NOT EXISTS keranjang (
     id         INT AUTO_INCREMENT PRIMARY KEY,
     hp         VARCHAR(20) NOT NULL UNIQUE,
-    isi        LONGTEXT    NOT NULL DEFAULT '[]',
+    isi        LONGTEXT    NOT NULL,
     updated_at DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ");
