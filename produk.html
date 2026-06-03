@@ -1247,6 +1247,7 @@ async function muatKeranjangServer() {
     updateJumlahKeranjang();
     return;
   }
+  await sinkronKeranjangSaatLogin(); 
   try {
     const res = await fetch(`${API_KERANJANG}?aksi=ambil&hp=${encodeURIComponent(getUserHP())}`);
     const data = await res.json();
@@ -1484,6 +1485,24 @@ function autoIsiFormDariLogin() {
     orisBukaFormData();
     setTimeout(() => loadAlamatUntukPesan(), 200);
   };
+}
+
+
+async function sinkronKeranjangSaatLogin() {
+  if (!getUserHP()) return;
+  const lokal = JSON.parse(localStorage.getItem('bk_keranjang') || '[]');
+  if (lokal.length === 0) return;
+  // Ada keranjang lokal — upload ke server lalu hapus dari localStorage
+  try {
+    for (const k of lokal) {
+      await fetch(API_KERANJANG, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aksi: 'tambah', hp: getUserHP(), nama_produk: k.nama, harga: k.harga, qty: k.qty, jenis: k.jenis || 'kelapa' })
+      });
+    }
+    localStorage.removeItem('bk_keranjang');
+  } catch(e) {}
 }
 
 autoIsiFormDariLogin();
