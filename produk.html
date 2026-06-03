@@ -899,8 +899,9 @@
 // ============================================================
 const API_PESAN = 'https://bumi-kelapa-production-2a25.up.railway.app/Pesan.php';
 const API_CHAT  = 'https://bumi-kelapa-production-2a25.up.railway.app/chat.php';
-const API_STATUS = 'status.html';
 const API_KERANJANG = 'https://bumi-kelapa-production-2a25.up.railway.app/keranjang.php';
+const API_STATUS = 'status.html';
+
 // ============================================================
 // ★★★ SISTEM CHAT DENGAN CHATBOT ★★★
 // ============================================================
@@ -913,6 +914,10 @@ let chatOpen         = false;
 let chatMode         = 'bot'; // 'bot' | 'eskalasi' | 'admin'
 
 function getChatSession() {
+  const user = JSON.parse(localStorage.getItem('bk_user') || 'null');
+  if (user && user.hp) {
+    return 'hp-' + user.hp;
+  }
   let sid = localStorage.getItem('bk_chat_sid');
   if (!sid) {
     sid = 'bk-' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
@@ -1187,7 +1192,7 @@ function stopPolling() {
 
 // ---- Notif saat chat tertutup ----
 async function cekNotifChat() {
-  const sid = localStorage.getItem('bk_chat_sid');
+const sid = getChatSession();
   if (!sid || chatOpen) return;
   try {
     const res  = await fetch(`${API_CHAT}?aksi=ambil&session_id=${encodeURIComponent(sid)}&sejak_id=${chatIdTerakhir}`);
@@ -1226,7 +1231,7 @@ const dataWilayah = {
   "leitimur selatan":["kilang","hutumuri","naku","seri","eirene"]
 };
 
-// Ambil keranjang dari localStorage saat halaman dibuka
+
 
 let keranjang = [];
 function getUserHP() {
@@ -1246,13 +1251,19 @@ async function muatKeranjangServer() {
     const res = await fetch(`${API_KERANJANG}?aksi=ambil&hp=${encodeURIComponent(getUserHP())}`);
     const data = await res.json();
     if (data.sukses) {
-      keranjang = data.keranjang.map(k => ({
-        nama: k.nama_produk, harga: parseInt(k.harga), qty: parseInt(k.qty), jenis: k.jenis
+      keranjang = (data.keranjang || []).map(k => ({
+        nama: k.nama_produk, harga: parseInt(k.harga), qty: parseInt(k.qty), jenis: k.jenis || 'kelapa'
       }));
-      updateJumlahKeranjang();
+    } else {
+      keranjang = [];
     }
-  } catch(e) {}
+  } catch(e) {
+    keranjang = [];
+  }
+  updateJumlahKeranjang();
 }
+
+
 muatKeranjangServer();
 
 let produkAktif={nama:'',harga:0,qty:1,jenis:'kelapa'};
@@ -1277,7 +1288,7 @@ async function tambahKeranjang(nama, harga, btn) {
         body: JSON.stringify({ aksi: 'tambah', hp: getUserHP(), nama_produk: nama, harga, qty })
       });
     } catch(e) {}
-  } else {
+ } else {
     localStorage.setItem('bk_keranjang', JSON.stringify(keranjang));
   }
 }
